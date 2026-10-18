@@ -1,69 +1,105 @@
-import Image from "next/image";
+import Link from "next/link";
+import { AdSlot } from "@/components/AdSlot";
+import { JsonLd } from "@/components/JsonLd";
+import { QuickCalculator } from "@/components/QuickCalculator";
+import { StatePicker } from "@/components/StatePicker";
+import { publishableStates } from "@/lib/rates";
+import { pageMetadata } from "@/lib/seo";
+import { SITE_NAME, NOTICE, absoluteUrl } from "@/lib/site";
+import { STATES } from "@/lib/states";
 
-export default function Home() {
+export const metadata = pageMetadata({
+  title: `${SITE_NAME}: free paycheck calculators for every state`,
+  description:
+    "See what you take home after federal tax, Social Security, Medicare and state tax, and where each dollar goes. Free, private, no sign-up.",
+  path: "/",
+  absoluteTitle: true,
+});
+
+export default function HomePage() {
+  const codes = publishableStates();
+  const states = codes.map((c) => ({ code: c, name: STATES[c].name, slug: STATES[c].slug }));
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="wrap">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: SITE_NAME,
+          url: absoluteUrl("/"),
+        }}
+      />
+      <section className="hero">
+        <span className="eyebrow">Free paycheck calculators for US workers</span>
+        <h1>Decode your paycheck</h1>
+        <p className="lead">
+          See what you actually take home after federal tax, Social Security, Medicare and state tax, and
+          exactly where each dollar goes.
+        </p>
+      </section>
+
+      {states.length > 0 ? (
+        <QuickCalculator states={states} />
+      ) : (
+        <p className="pd-answer">State calculators open once their rates have been checked.</p>
+      )}
+
+      {codes.length > 0 ? (
+        <section className="block" aria-labelledby="pick">
+          <div>
+            <h2 id="pick">Pick your state</h2>
+            <p style={{ color: "var(--ink-muted)", marginTop: 8 }}>
+              Each calculator uses that state&apos;s rules and shows where they differ.
+            </p>
+          </div>
+          <StatePicker codes={codes} />
+          <p>
+            <Link href="/paycheck-calculator">See all state calculators</Link>
           </p>
+        </section>
+      ) : null}
+
+      <AdSlot variant="leaderboard" />
+
+      <section className="block" aria-labelledby="tools">
+        <h2 id="tools">More tools</h2>
+        <div className="trio">
+          <Link className="pd-card tool" href="/salary">
+            <h3>Hourly to salary</h3>
+            <p>Turn an hourly wage into yearly, monthly and weekly pay.</p>
+          </Link>
+          <Link className="pd-card tool" href="/overtime-calculator">
+            <h3>Overtime calculator</h3>
+            <p>Work out time-and-a-half pay for extra hours, with your estimated net.</p>
+          </Link>
+          <Link className="pd-card tool" href="/methodology">
+            <h3>How we calculate</h3>
+            <p>Every rate, formula and source, and how we keep them current.</p>
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section className="block" aria-labelledby="why">
+        <h2 id="why">Why trust the numbers</h2>
+        <div className="trio">
+          <div>
+            <h3>Official rules</h3>
+            <p>
+              Federal rules from IRS publications and each state&apos;s revenue department, with the source
+              linked on every page.
+            </p>
+          </div>
+          <div>
+            <h3>Checked and dated</h3>
+            <p>Every rate has a verification date, shown next to your result.</p>
+          </div>
+          <div>
+            <h3>Private by design</h3>
+            <p>The math runs in your browser. We do not store your pay.</p>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+      <div className="pd-stamp">{NOTICE}</div>
+    </main>
   );
 }

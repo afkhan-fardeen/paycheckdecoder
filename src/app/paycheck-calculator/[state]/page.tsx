@@ -1,0 +1,189 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { AnswerBlock } from "@/components/AnswerBlock";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { Calculator } from "@/components/Calculator";
+import { ContentColumns } from "@/components/ContentColumns";
+import { Faq } from "@/components/Faq";
+import { JsonLd } from "@/components/JsonLd";
+import { formatCents, formatPercent, formatWhole } from "@/engine";
+import { examplePaycheck, EXAMPLE_SALARY } from "@/lib/example";
+import {
+  getStateRates,
+  hasSignOff,
+  isPublishable,
+  lastVerifiedOn,
+  publishableStates,
+  federalRates,
+  type StateCode,
+} from "@/lib/rates";
+import { pageMetadata } from "@/lib/seo";
+import { TAX_YEAR, absoluteUrl, formatLongDate } from "@/lib/site";
+import { STATES, stateBySlug } from "@/lib/states";
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return publishableStates().map((code) => ({ state: STATES[code].slug }));
+}
+
+function load(slug: string) {
+  const info = stateBySlug(slug);
+  if (!info || !isPublishable(info.code)) return null;
+  return info;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps<"/paycheck-calculator/[state]">): Promise<Metadata> {
+  const { state } = await params;
+  const info = load(state);
+  if (!info) return {};
+  const r = examplePaycheck(info.code);
+  return pageMetadata({
+    title: `${info.name} Paycheck Calculator ${TAX_YEAR}`,
+    description: `Estimate your ${info.name} take-home pay for ${TAX_YEAR}. A ${formatWhole(EXAMPLE_SALARY * 100)} salary nets about ${formatWhole(r.lines.net.annual)} a year after federal tax, Social Security and Medicare. No state income tax.`,
+    path: `/paycheck-calculator/${info.slug}`,
+  });
+}
+
+const EXAMPLE_SALARIES = [30_000, 52_000, 75_000, 100_000, 150_000];
+
+export default async function StatePage({ params }: PageProps<"/paycheck-calculator/[state]">) {
+  const { state } = await params;
+  const info = load(state);
+  if (!info) notFound();
+  const code: StateCode = info.code;
+  const path = `/paycheck-calculator/${info.slug}`;
+  const example = examplePaycheck(code);
+  const verifiedOn = lastVerifiedOn(code);
+  const signed = hasSignOff(code);
+  const reviewer = getStateRates(code).verifiedBy ?? federalRates.verifiedBy;
+  const related = info.related.filter(isPublishable);
+
+  return (
+    <main className="wrap">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          name: `${info.name} Paycheck Calculator`,
+          url: absoluteUrl(path),
+          applicationCategory: "FinanceApplication",
+          operatingSystem: "Any",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        }}
+      />
+      <header className="block" style={{ gap: 12 }}>
+        <Breadcrumbs
+          items={[
+            { name: "Home", href: "/" },
+            { name: "State calculators", href: "/paycheck-calculator" },
+            { name: info.name, href: path },
+          ]}
+        />
+        <h1>{info.name} paycheck calculator</h1>
+        <AnswerBlock
+          caption={
+            signed && verifiedOn
+              ? `Rates verified ${formatLongDate(verifiedOn)}.`
+              : "Preview: rates not signed off yet."
+          }
+        >
+          <b>
+            At a {formatWhole(EXAMPLE_SALARY * 100)} salary in {info.name}
+          </b>
+          , filing single, you take home about <b>{formatWhole(example.lines.net.annual)} a year</b>, or{" "}
+          <b>{formatCents(example.lines.net.perPeriod)} every two weeks</b>, after federal income tax, Social
+          Security and Medicare. {info.name} has no state income tax.
+        </AnswerBlock>
+      </header>
+
+      <Calculator code={code} stateName={info.name} />
+
+      <ContentColumns>
+        <article className="block" style={{ gap: 12 }}>
+          <h2>How {info.name} payroll tax works</h2>
+          <p style={{ color: "var(--ink-muted)", maxWidth: 640 }}>{info.structure}</p>
+          <ul style={{ margin: 0, paddingLeft: "1.25rem", display: "grid", gap: 8, maxWidth: 640 }}>
+            {info.programs.map((p) => (
+              <li key={p.name}>
+                <b>{p.name}.</b> {p.text}
+              </li>
+            ))}
+          </ul>
+          <p style={{ color: "var(--ink-muted)", maxWidth: 640 }}>{info.localNote}</p>
+          <p style={{ color: "var(--ink-muted)", maxWidth: 640 }}>
+            Each line, its rate and its source are listed on the{" "}
+            <Link href="/methodology">methodology page</Link>.
+          </p>
+          <div className="meta">
+            <span>{signed ? `Reviewed by ${reviewer}` : "Not yet reviewed (preview)"}</span>
+            {verifiedOn && signed ? <span>Last updated {formatLongDate(verifiedOn)}</span> : null}
+            <Link href="/methodology">Methodology and sources</Link>
+          </div>
+        </article>
+
+        <section className="block" aria-labelledby="examples" style={{ gap: 12 }}>
+          <h2 id="examples">Take-home pay in {info.name} at common salaries</h2>
+          <div className="pd-card">
+            <div className="table-scroll">
+              <table className="pd-table">
+                <caption>Single filer, paid every two weeks, no deductions, {TAX_YEAR} rates</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Salary</th>
+                    <th scope="col" className="pd-n">
+                      Take-home per year
+                    </th>
+                    <th scope="col" className="pd-n">
+                      Per paycheck
+                    </th>
+                    <th scope="col" className="pd-n">
+                      Take-home rate
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {EXAMPLE_SALARIES.map((salary) => {
+                    const r = examplePaycheck(code, salary);
+                    return (
+                      <tr key={salary}>
+                        <th scope="row">{formatWhole(salary * 100)}</th>
+                        <td className="pd-n">{formatWhole(r.lines.net.annual)}</td>
+                        <td className="pd-n">{formatCents(r.lines.net.perPeriod)}</td>
+                        <td className="pd-n">{formatPercent(r.takeHomeRate)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <Faq items={info.faqs} />
+
+        <section className="block" aria-labelledby="rel">
+          <h2 id="rel" style={{ fontSize: 18, lineHeight: "24px" }}>
+            Related calculators
+          </h2>
+          <div className="chip-row">
+            {related.map((c) => (
+              <Link key={c} className="chip" href={`/paycheck-calculator/${STATES[c].slug}`}>
+                {STATES[c].name}
+              </Link>
+            ))}
+            <Link className="chip" href="/salary/25-an-hour-is-how-much-a-year">
+              Hourly to salary
+            </Link>
+            <Link className="chip" href="/overtime-calculator">
+              Overtime
+            </Link>
+          </div>
+        </section>
+      </ContentColumns>
+    </main>
+  );
+}

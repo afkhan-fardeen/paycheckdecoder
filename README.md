@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Paycheck Decoder
 
-## Getting Started
+Free US take-home pay calculators (paycheckdecoder.com). Next.js 16, TypeScript, Tailwind v4. Every calculation runs in the browser.
 
-First, run the development server:
+**Read [context.md](context.md) first.** It holds the product scope, design rules, tax-engine method, decisions and open items.
+
+## Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # allows unsigned rates locally
+npm run dev                  # http://localhost:3000
+npm run check                # typecheck + lint + tests
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Browser smoke test: `npm run build && npx next start -p 3111`, then `BASE_URL=http://localhost:3111 npm run smoke`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Layout
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/engine/      pure tax engine (cents), hourly, overtime, breakdown, tests
+src/data/rates/  versioned rate files, one per jurisdiction and year
+src/lib/         rate loader and schema, state content, form logic, SEO helpers
+src/components/  UI (design-system components)
+src/styles/      tokens.css, components.css, site.css (ported from the design system)
+src/app/         routes
+scripts/         check-rates, signoff, smoke
+docs/runbook.md  sign-off, deploy and launch checklist
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+States publish to production only after a person signs off their rate files. See `docs/runbook.md`.

@@ -1,0 +1,17 @@
+{
+  "jurisdiction": "FL",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "none",
+  "parameters": {},
+  "sources": [{ "name": "Florida Department of Revenue", "url": "https://floridarevenue.com/taxes/" }],
+  "retrievedOn": null,
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "No state income tax withheld from wages and no employee-paid state payroll programs. Employer-side taxes do not reduce employee pay.",
+    "Entered from general knowledge, not yet read from the agency source. Read the source and sign off before publishing."
+  ]
+}

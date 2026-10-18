@@ -1,0 +1,461 @@
+/* Paycheck Decoder component styles. Every value comes from tokens.css. */
+.pd-page {
+  background: var(--surface-100);
+  -webkit-font-smoothing: antialiased;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 24px;
+  margin: 0;
+  padding: var(--space-5);
+}
+.pd-page * {
+  box-sizing: border-box;
+}
+.pd-num {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.pd-card {
+  background: var(--surface-200);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+.pd-answer {
+  background: var(--surface-300);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  font-size: 16px;
+  line-height: 26px;
+}
+.pd-answer b {
+  font-weight: 600;
+}
+.pd-answer .pd-caption {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink-muted);
+}
+.pd-sample {
+  margin: var(--space-4) 0 0;
+  color: var(--ink-muted);
+  font-size: 12.5px;
+  line-height: 18px;
+}
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Button */
+.pd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-md);
+  border: 1.5px solid transparent;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 120ms;
+}
+.pd-btn:hover:not(:disabled) {
+  background-image: linear-gradient(rgb(0 0 0 / 0.1), rgb(0 0 0 / 0.1));
+}
+.pd-btn-primary {
+  background-color: var(--ink);
+  color: var(--surface-200);
+}
+.pd-btn-secondary {
+  background-color: var(--surface-200);
+  color: var(--ink);
+  border-color: var(--border-control);
+}
+.pd-btn-quiet {
+  background-color: transparent;
+  color: var(--link);
+  text-decoration: underline;
+  padding: 0 var(--space-3);
+}
+.pd-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Field */
+.pd-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.pd-label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+.pd-control {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  background: var(--surface-200);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-md);
+  padding: 0 var(--space-3);
+  gap: var(--space-2);
+}
+.pd-control:focus-within {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.pd-control input,
+.pd-control select {
+  flex: 1;
+  min-width: 0;
+  min-height: calc(var(--touch-target) - 3px);
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  padding: 0;
+  outline: none;
+}
+.pd-affix {
+  color: var(--ink-muted);
+  font-size: 16px;
+}
+.pd-help {
+  color: var(--ink-muted);
+  font-size: 14px;
+  line-height: 20px;
+}
+.pd-field.is-error .pd-control {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 1px var(--danger);
+}
+.pd-error {
+  background: var(--danger-tint);
+  color: var(--ink);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  font-size: 14px;
+  line-height: 20px;
+}
+.pd-error b {
+  color: var(--danger);
+}
+
+/* SegmentedControl */
+.pd-seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.pd-seg button {
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-control);
+  background: var(--surface-200);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  cursor: pointer;
+}
+.pd-seg button[aria-checked="true"] {
+  background: var(--ink);
+  color: var(--surface-200);
+  border-color: var(--ink);
+  font-weight: 500;
+}
+.pd-seg button:hover {
+  background-image: linear-gradient(rgb(0 0 0 / 0.06), rgb(0 0 0 / 0.06));
+}
+
+/* NetPayResult */
+.pd-result-label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--ink-muted);
+}
+.pd-result-figure {
+  color: var(--net);
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-sans);
+  font-size: 56px;
+  line-height: 60px;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.pd-result-unit {
+  color: var(--ink-muted);
+  font-size: 14px;
+  line-height: 20px;
+}
+.pd-result-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin: var(--space-4) 0;
+  padding: var(--space-4) 0 0;
+  border-top: 1px solid var(--border);
+}
+.pd-stat dt {
+  color: var(--ink-muted);
+  font-size: 12.5px;
+  line-height: 18px;
+}
+.pd-stat dd {
+  margin: 0;
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* VerifiedStamp and notice */
+.pd-stamp {
+  background: var(--notice-bg);
+  color: var(--ink);
+  border: 1px solid #fde7a8;
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  font-size: 13px;
+  line-height: 18px;
+}
+.pd-stamp a {
+  color: var(--link);
+  text-decoration: underline;
+}
+.pd-stamp b {
+  font-weight: 600;
+}
+
+/* BreakdownBar */
+.pd-bar {
+  display: flex;
+  gap: 2px;
+  height: var(--bar-height);
+  background: var(--surface-300);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.pd-bar > span {
+  display: block;
+  height: 100%;
+  min-width: 3px;
+  transition: width 120ms;
+}
+.pd-bar .is-net {
+  background: var(--net);
+}
+.pd-bar .is-federal {
+  background: var(--slice-federal);
+}
+.pd-bar .is-social {
+  background: var(--slice-social);
+}
+.pd-bar .is-medicare {
+  background: var(--slice-medicare);
+}
+.pd-bar .is-state {
+  background: var(--slice-state);
+}
+.pd-bar .is-deductions {
+  background: var(--slice-deductions);
+}
+.pd-legend {
+  list-style: none;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+.pd-legend li {
+  display: grid;
+  grid-template-columns: 10px 1fr auto 56px;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 14px;
+  line-height: 20px;
+}
+.pd-key {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+}
+.pd-key.is-net {
+  background: var(--net);
+}
+.pd-key.is-federal {
+  background: var(--slice-federal);
+}
+.pd-key.is-social {
+  background: var(--slice-social);
+}
+.pd-key.is-medicare {
+  background: var(--slice-medicare);
+}
+.pd-key.is-state {
+  background: var(--slice-state);
+}
+.pd-key.is-deductions {
+  background: var(--slice-deductions);
+}
+.pd-legend .pd-amt {
+  font-weight: 600;
+  text-align: right;
+}
+.pd-legend .pd-share {
+  color: var(--ink-muted);
+  text-align: right;
+}
+
+/* BreakdownTable */
+.pd-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 20px;
+}
+.pd-table caption {
+  text-align: left;
+  font-weight: 600;
+  padding-bottom: var(--space-2);
+}
+.pd-table th,
+.pd-table td {
+  padding: var(--space-3) var(--space-3);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+.pd-table thead th {
+  background: var(--surface-300);
+  font-weight: 500;
+}
+.pd-table thead th:first-child {
+  border-top-left-radius: var(--radius-sm);
+}
+.pd-table thead th:last-child {
+  border-top-right-radius: var(--radius-sm);
+}
+.pd-table td.pd-n,
+.pd-table th.pd-n {
+  text-align: right;
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+.pd-table tbody th {
+  font-weight: 500;
+}
+.pd-table .pd-note {
+  color: var(--ink-muted);
+  font-size: 12.5px;
+  line-height: 18px;
+}
+.pd-table tr.is-total th,
+.pd-table tr.is-total td {
+  border-top: 1px solid var(--ink);
+  border-bottom: 0;
+  font-weight: 500;
+}
+.pd-table tr.is-total td.pd-n {
+  color: var(--net);
+  font-size: 16px;
+}
+
+/* StatePicker */
+.pd-states {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: var(--space-2);
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.pd-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  background: var(--surface-200);
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+}
+.pd-state small {
+  font-weight: 400;
+  color: var(--ink-muted);
+  font-size: 12.5px;
+  line-height: 18px;
+}
+.pd-state:hover {
+  border-color: var(--border-control);
+}
+
+/* AdSlot */
+.pd-ad {
+  background: var(--surface-200);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: var(--space-2) var(--space-3) var(--space-3);
+}
+.pd-ad-label {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--ink-muted);
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+.pd-ad-box {
+  background: var(--surface-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-muted);
+  font-size: 12.5px;
+  text-align: center;
+  border-radius: var(--radius-md);
+}
+.pd-ad-box.is-rect {
+  width: 300px;
+  height: 250px;
+  max-width: 100%;
+}
+.pd-ad-box.is-rail {
+  width: 300px;
+  height: 600px;
+  max-width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pd-btn,
+  .pd-bar > span {
+    transition: none;
+  }
+}
