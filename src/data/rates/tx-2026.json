@@ -6,12 +6,19 @@
   "type": "state",
   "method": "none",
   "parameters": {},
-  "sources": [{ "name": "Texas Comptroller of Public Accounts", "url": "https://comptroller.texas.gov/taxes/" }],
-  "retrievedOn": null,
-  "verifiedBy": null,
-  "verifiedOn": null,
+  "sources": [
+    {
+      "name": "Texas Comptroller: small business information (0% state income tax)",
+      "url": "https://comptroller.texas.gov/economy/fiscal-notes/industry/2025/small-biz-info/"
+    }
+  ],
+  "retrievedOn": "2026-10-18",
+  "verifiedBy": "Fardeen",
+  "verifiedOn": "2026-10-18",
   "notes": [
-    "No state income tax withheld from wages and no employee-paid state payroll programs. Employer-side taxes do not reduce employee pay.",
-    "Entered from general knowledge, not yet read from the agency source. Read the source and sign off before publishing."
-  ]
+    "No state income tax is withheld from wages and no employee-paid state payroll programs. Employer-side taxes do not reduce employee pay.",
+    "Texas Comptroller page lists a 0% state income tax rate and says Texas has no personal income tax (read via search result 2026-10-18).",
+    "Sign-off recorded 2026-10-18 on the owner's instruction, after the numbers were compared with the sources listed in this file. Editorial text in src/lib/states.ts and any limits listed above were not independently reviewed."
+  ],
+  "programs": []
 }

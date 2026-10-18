@@ -33,6 +33,11 @@ export interface PaycheckInput {
   preTaxHealth?: number;
   /** Deductions taken after tax (Roth 401(k), union dues, garnishments). */
   postTax?: number;
+  /**
+   * Allowances, exemptions or dependents claimed on the state's withholding form
+   * (IL-W-4 line 1, NC-4, Ohio IT 4, Georgia G-4). Whole number, default 0.
+   */
+  stateAllowances?: number;
   /** Optional local income tax rate as a percent, entered by the visitor. */
   localRatePercent?: number;
   w4?: W4Inputs;
@@ -52,6 +57,7 @@ export type LineKey =
   | "medicare"
   | "additionalMedicare"
   | "state"
+  | "statePrograms"
   | "local"
   | "postTax"
   | "net";

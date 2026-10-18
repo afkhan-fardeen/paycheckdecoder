@@ -1,0 +1,34 @@
+{
+  "jurisdiction": "IL",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "flat",
+  "parameters": {
+    "rate": 0.0495,
+    "standardDeduction": {
+      "single": 0,
+      "married": 0,
+      "head": 0
+    },
+    "allowanceAmount": 2925,
+    "roundToDollar": false
+  },
+  "programs": [],
+  "sources": [
+    {
+      "name": "Illinois Booklet IL-700-T (2026)",
+      "url": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/withholding/documents/currentyear/il-700-t.pdf"
+    }
+  ],
+  "retrievedOn": "2026-10-18",
+  "verifiedBy": "Fardeen",
+  "verifiedOn": "2026-10-18",
+  "notes": [
+    "Read from Booklet IL-700-T (R-12/25), effective 2026-01-01, on 2026-10-18: 4.95% rate, $2,925 per Form IL-W-4 line 1 allowance, automated payroll method on page 4.",
+    "IL-W-4 line 2 allowances ($1,000 each) are not modelled: the calculator treats the allowance count as line 1 allowances.",
+    "Official worked example on page 4: $800 weekly, 2 line-1 and 2 line-2 allowances withholds $32.13. The line-1-only part is covered by a test.",
+    "Sign-off recorded 2026-10-18 on the owner's instruction, after the numbers were compared with the sources listed in this file. Editorial text in src/lib/states.ts and any limits listed above were not independently reviewed."
+  ]
+}

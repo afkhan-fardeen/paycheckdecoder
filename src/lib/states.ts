@@ -6,6 +6,8 @@ export interface StateInfo {
   name: string;
   /** Short line shown under the state name in the picker. */
   tagline: string;
+  /** Label for the state withholding allowance field, or undefined when the state has none. */
+  allowanceLabel?: string;
   /** Opening paragraph of "How {state} payroll tax works". */
   structure: string;
   programs: { name: string; text: string }[];
@@ -175,6 +177,205 @@ export const STATES: Record<StateCode, StateInfo> = {
       },
     ],
     related: ["TX", "FL", "TN"],
+  },
+  WA: {
+    code: "WA",
+    slug: "washington",
+    name: "Washington",
+    tagline: "WA Cares and Paid Leave apply",
+    structure:
+      "Washington does not tax wages as income. Your paycheck is still reduced by federal income tax withholding, Social Security and Medicare, plus two employee-paid state programs: the WA Cares long-term care premium and Paid Family and Medical Leave.",
+    programs: [
+      {
+        name: "WA Cares and Paid Family and Medical Leave",
+        text: "Both are withheld from your paycheck by your employer. The current rates and wage caps are listed above and come from the state's own pages.",
+      },
+      {
+        name: "Unemployment insurance",
+        text: "Washington unemployment tax is paid by employers and is not withheld from your pay.",
+      },
+    ],
+    localNote:
+      "Washington cities and counties do not collect an income tax on wages, so there is no local rate to enter.",
+    faqs: [
+      {
+        q: "Does Washington have a state income tax?",
+        a: "No. Washington does not tax wages as income, but two state programs, WA Cares and Paid Family and Medical Leave, take a share of your pay.",
+      },
+      {
+        q: "What is WA Cares?",
+        a: "WA Cares is the state's long-term care insurance program. Employees pay the premium through payroll, unless they hold an approved exemption, which this calculator does not model.",
+      },
+      {
+        q: "Does my employer pay part of Paid Family and Medical Leave?",
+        a: "Employers with 50 or more employees pay part of the premium. The calculator assumes you pay the employee share shown above.",
+      },
+      {
+        q: "Do I have to pay these if I work in Washington but live elsewhere?",
+        a: "Premiums generally follow where you work. Check with your employer or the state's Employment Security Department about your situation.",
+      },
+    ],
+    related: ["TX", "FL", "NV", "TN", "IL"],
+  },
+  IL: {
+    code: "IL",
+    slug: "illinois",
+    name: "Illinois",
+    tagline: "Flat state income tax",
+    allowanceLabel: "Allowances on Form IL-W-4, line 1",
+    structure:
+      "Illinois taxes wages at one flat rate. Your employer withholds that rate after subtracting an allowance amount for each allowance you claim on Form IL-W-4, then your paycheck is also reduced by federal income tax withholding, Social Security and Medicare.",
+    programs: [
+      {
+        name: "Unemployment insurance",
+        text: "Illinois unemployment tax is paid by employers and is not withheld from your pay.",
+      },
+      {
+        name: "Disability and paid family leave",
+        text: "Illinois has no state-run disability or paid family leave insurance that takes money from your paycheck.",
+      },
+    ],
+    localNote:
+      "Illinois cities and counties do not collect an income tax on wages, so there is no local rate to enter.",
+    faqs: [
+      {
+        q: "What is the Illinois income tax rate?",
+        a: "Illinois uses one flat rate for all income levels, shown in the rules above. There are no brackets.",
+      },
+      {
+        q: "What is Form IL-W-4?",
+        a: "It tells your employer how many allowances you claim. Each one lowers the pay that is taxed. The calculator's allowance field is the number you put on line 1.",
+      },
+      {
+        q: "Does Illinois have a standard deduction in withholding?",
+        a: "No. Illinois withholding subtracts only the allowance amounts. Any deductions you take come at filing time.",
+      },
+      {
+        q: "Why is my Illinois withholding different from this estimate?",
+        a: "Line 2 allowances on Form IL-W-4 and any extra withholding you requested are not modelled, and your employer's payroll system may round differently.",
+      },
+    ],
+    related: ["OH", "GA", "NC", "WA"],
+  },
+  NC: {
+    code: "NC",
+    slug: "north-carolina",
+    name: "North Carolina",
+    tagline: "Flat state income tax",
+    allowanceLabel: "Allowances on Form NC-4",
+    structure:
+      "North Carolina taxes wages at a flat rate. Employers withhold at that rate plus a small addition, after subtracting a standard deduction and an amount for each allowance on Form NC-4. Your paycheck is also reduced by federal income tax withholding, Social Security and Medicare.",
+    programs: [
+      {
+        name: "Unemployment insurance",
+        text: "North Carolina unemployment tax is paid by employers and is not withheld from your pay.",
+      },
+      {
+        name: "Disability and paid family leave",
+        text: "North Carolina has no state-run disability or paid family leave insurance that takes money from your paycheck.",
+      },
+    ],
+    localNote:
+      "North Carolina cities and counties do not collect an income tax on wages, so there is no local rate to enter.",
+    faqs: [
+      {
+        q: "What is the North Carolina income tax rate?",
+        a: "North Carolina uses a flat income tax rate. Employers withhold one tenth of a percentage point more than that rate, which is the withholding rate shown above.",
+      },
+      {
+        q: "Why is the withholding rate higher than the tax rate?",
+        a: "North Carolina sets withholding at the income tax rate plus 0.1%, so slightly more is held back during the year.",
+      },
+      {
+        q: "Does North Carolina round withholding?",
+        a: "Yes. Each paycheck's state withholding is rounded to the nearest whole dollar, so your state line has no cents.",
+      },
+      {
+        q: "What is Form NC-4?",
+        a: "It tells your employer your filing status and how many allowances you claim. Each allowance lowers the pay that is taxed for withholding.",
+      },
+    ],
+    related: ["GA", "OH", "IL", "TN"],
+  },
+  OH: {
+    code: "OH",
+    slug: "ohio",
+    name: "Ohio",
+    tagline: "Graduated withholding, local tax common",
+    allowanceLabel: "Exemptions on Form IT 4",
+    structure:
+      "Ohio employers withhold state income tax with a formula that has three pay tiers and an exemption amount for each exemption on Form IT 4. These withholding rates are set by the Ohio Department of Taxation and are not the same as the rate on the annual tax return. Your paycheck is also reduced by federal income tax withholding, Social Security and Medicare.",
+    programs: [
+      {
+        name: "Unemployment insurance",
+        text: "Ohio unemployment tax is paid by employers and is not withheld from your pay.",
+      },
+      {
+        name: "School district income tax",
+        text: "Some Ohio school districts levy an income tax that your employer withholds. This is not included unless you enter it as a local rate.",
+      },
+    ],
+    localNote:
+      "Many Ohio cities charge an income tax on wages, usually withheld by your employer for the city where you work. Enter your combined city and school district rate in the local rate field to include it.",
+    faqs: [
+      {
+        q: "Why does Ohio withholding use a formula with three tiers?",
+        a: "The Ohio Department of Taxation publishes a withholding formula, effective August 1, 2026, with a rate for each pay tier. It is built to approximate the annual tax over the year.",
+      },
+      {
+        q: "Do I pay city income tax in Ohio?",
+        a: "Often, yes. Many Ohio cities tax wages. Enter your city rate, and any school district rate, in the local rate field to see it in your estimate.",
+      },
+      {
+        q: "What is Form IT 4?",
+        a: "It tells your employer how many exemptions you claim. Each exemption lowers the pay that is taxed for withholding.",
+      },
+      {
+        q: "Did Ohio's withholding change this year?",
+        a: "Yes. New tables took effect for payrolls ending on or after August 1, 2026. This calculator uses the current tables, so a paycheck from earlier in the year may differ.",
+      },
+    ],
+    related: ["IL", "GA", "NC", "TN"],
+  },
+  GA: {
+    code: "GA",
+    slug: "georgia",
+    name: "Georgia",
+    tagline: "Flat state income tax",
+    allowanceLabel: "Dependents on Form G-4",
+    structure:
+      "Georgia taxes wages at one flat rate. Employers withhold it after subtracting a standard deduction that depends on filing status, plus an allowance for each dependent claimed on Form G-4. Your paycheck is also reduced by federal income tax withholding, Social Security and Medicare.",
+    programs: [
+      {
+        name: "Unemployment insurance",
+        text: "Georgia unemployment tax is paid by employers and is not withheld from your pay.",
+      },
+      {
+        name: "Disability and paid family leave",
+        text: "Georgia has no state-run disability or paid family leave insurance that takes money from your paycheck.",
+      },
+    ],
+    localNote:
+      "Georgia cities and counties do not collect an income tax on wages, so there is no local rate to enter.",
+    faqs: [
+      {
+        q: "What is the Georgia income tax rate?",
+        a: "Georgia uses one flat rate. The state lowered it during 2026, and the current withholding rate is shown in the rules above.",
+      },
+      {
+        q: "Did my employer withhold a different rate earlier this year?",
+        a: "Possibly. The state told employers to keep withholding the old rate until the change took effect and allowed them to switch afterwards, so early-2026 paychecks may differ from this estimate.",
+      },
+      {
+        q: "How does filing status change Georgia withholding?",
+        a: "The standard deduction is larger for married filing jointly when the spouse does not work. Married couples who both work use the smaller deduction on Form G-4, so they see less pay than this estimate for married filers.",
+      },
+      {
+        q: "What is Form G-4?",
+        a: "It tells your employer your filing status and the number of dependents you claim. Each dependent allowance lowers the pay that is taxed.",
+      },
+    ],
+    related: ["NC", "OH", "IL", "TN"],
   },
 };
 

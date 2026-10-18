@@ -211,3 +211,55 @@ describe("validation", () => {
     ).toThrow(RangeError);
   });
 });
+
+/**
+ * IRS Publication 15-T (2026), automated percentage method, STANDARD schedules (step 2 box not checked).
+ * Worksheet 1A line 1(g) subtracts $8,600 (married filing jointly: $12,900) from annual wages, then the
+ * schedule applies. Read from irs.gov/publications/p15t on 2026-10-18. This proves the engine's
+ * "standard deduction, then brackets" method gives the same tax as the IRS tables.
+ */
+describe("matches IRS Publication 15-T (2026) percentage method", () => {
+  type Row = [floor: number, base: number, rate: number];
+  const SINGLE: Row[] = [
+    [0, 0, 0],
+    [7500, 0, 0.1],
+    [19900, 1240, 0.12],
+    [57900, 5800, 0.22],
+    [113200, 17966, 0.24],
+    [209275, 41024, 0.32],
+    [263725, 58448, 0.35],
+    [648100, 192979.25, 0.37],
+  ];
+  const MARRIED: Row[] = [
+    [0, 0, 0],
+    [19300, 0, 0.1],
+    [44100, 2480, 0.12],
+    [120100, 11600, 0.22],
+    [230700, 35932, 0.24],
+    [422850, 82048, 0.32],
+    [531750, 116896, 0.35],
+    [788000, 206583.5, 0.37],
+  ];
+  const pub15t = (rows: Row[], adjustment: number, annualWages: number) => {
+    const adjusted = Math.max(0, annualWages - adjustment);
+    const row = [...rows].reverse().find(([floor]) => adjusted >= floor)!;
+    return row[1] + (adjusted - row[0]) * row[2];
+  };
+
+  it("single and married tax agree at wages across every bracket", () => {
+    for (const annual of [
+      0, 8000, 16100, 25000, 40000, 52000, 75000, 120000, 180000, 250000, 400000, 700000,
+    ]) {
+      for (const [status, rows, adjustment] of [
+        ["single", SINGLE, 8600],
+        ["married", MARRIED, 12900],
+      ] as const) {
+        const expected = pub15t(rows, adjustment, annual);
+        const r = calc({ grossPerPeriod: annual / 52, frequency: "weekly", filingStatus: status });
+        // The weekly pay input and the weekly tax are each rounded to the cent, which can move the
+        // annual figure by up to about 35 cents. A method difference would be dollars.
+        expect(Math.abs(r.lines.federal.annual / 100 - expected)).toBeLessThan(0.5);
+      }
+    }
+  });
+});

@@ -1,6 +1,6 @@
 # Paycheck Decoder: project context
 
-Read this first. It replaces opening the PRD, design system and design canvas. Last updated 2026-10-18.
+Read this first. It replaces opening the PRD, design system and design canvas. Last updated 2026-10-18 (v1.1 states added).
 
 ## 1. What this is
 
@@ -22,11 +22,11 @@ Their CSS is ported into `src/styles/` (tokens.css, components.css, site.css). T
 
 ## 3. Status (2026-10-18)
 
-Built and passing: Next.js app, calculation engine, rate files for federal + TX/FL/TN/NV, all v1 page types, trust pages, sitemap/robots/llms.txt, JSON-LD, CI, 32 unit tests, 22 browser smoke checks (desktop and 390px). Build is fully static.
+Built and passing: Next.js app, calculation engine, rate files for federal + 9 states (TX, FL, TN, NV from v1; WA, IL, NC, OH, GA from v1.1), all page types, trust pages, sitemap/robots/llms.txt, JSON-LD, CI, 51 unit tests, 33 browser smoke checks (desktop and 390px). Build is fully static (50 pages in preview mode).
 
-**Not launched.** Nothing is deployed, no domain bought, no repo pushed, nothing committed (the repo is initialized, no commits made).
+**Not launched.** Nothing is deployed and no domain is bought. v1 is pushed to https://github.com/afkhan-fardeen/paycheckdecoder.git (`main`, commit 222836f); the v1.1 work is **uncommitted** until Fardeen asks.
 
-**Production shows no state pages until a human signs off the rate files** (see section 6). This is deliberate. Local/preview builds set `NEXT_PUBLIC_ALLOW_UNVERIFIED=1` to show them.
+**All ten rate files (federal + 9 states) were signed off on 2026-10-18** as "Fardeen", on the owner's instruction, after Claude compared the numbers with the official sources in each file (see section 6). A production build now generates all 9 state pages. The gate still exists: any new or changed rate file without a sign-off is hidden from production. Local/preview builds set `NEXT_PUBLIC_ALLOW_UNVERIFIED=1`.
 
 ## 4. Stack and decisions
 
@@ -48,14 +48,14 @@ Pure TypeScript, no I/O. Money is **integer cents** everywhere; format only at t
 2. Income-tax wages = gross - 401(k) - health/HSA. FICA wages = gross - health/HSA.
 3. Federal = brackets(income-tax wages + W-4 4a - W-4 4b - standard deduction) - W-4 step 3 credits, floored at 0, divided by periods, plus 4c extra withholding. Equivalent to the Pub 15-T percentage method for a post-2020 W-4 with step 2 **unchecked**.
 4. Social Security 6.2% up to wage base (cap spread evenly across paychecks); Medicare 1.45%; Additional Medicare 0.9% above $200,000 (spread evenly).
-5. State: only method `none` exists (no state income tax). Local = user-entered percent of income-tax wages.
+5. State income tax by the method in the state's rate file (`src/engine/state.ts`): `none`; `flat` = (annual income-tax wages - standard deduction - allowances x allowance amount) x rate, optionally rounded to the whole dollar per paycheck (NC); `tiered` = TW = wages - exemptions x amount, then tier base + (TW - tier floor) x rate (Ohio). Allowances/exemptions/dependents come from `stateAllowances` (IL-W-4 line 1, NC-4, Ohio IT 4, Georgia G-4), default 0, and the field only appears for states that use it (`allowanceLabel` in `src/lib/states.ts`). Employee-paid state programs (`programs` in the rate file: Washington PFML and WA Cares) apply to **gross** wages, with an optional annual wage cap and employee share, in the `statePrograms` line. Local = user-entered percent of income-tax wages.
 6. Each line rounded to the cent per paycheck; `annual = perPeriod * periods` so columns add up. Net = gross minus all lines. Throws `RangeError` on invalid input or if deductions exceed pay; `validateInput` returns field messages shown after "Error:".
 
 Other modules: `hourly.ts` (hourly -> yearly/monthly/biweekly/weekly/daily, 8-hour day), `overtime.ts` (threshold 40, multiplier 1.5 or 2), `breakdown.ts` (the six bar slices: net, federal, social, medicare incl. additional, state+local, deductions).
 
-**Not modelled in v1** (also listed on /methodology): W-4 step 2 multiple-jobs checkbox, supplemental/bonus wage rates, mid-year cap cut-off, any state income tax method, garnishments.
+**Not modelled** (also listed on /methodology): W-4 step 2 multiple-jobs checkbox, supplemental/bonus wage rates, mid-year cap cut-off, garnishments, Illinois IL-W-4 line 2 allowances ($1,000 each), Georgia two-earner married deduction, Washington program exemptions and workers' compensation employee share, Ohio's pre-Aug-2026 withholding tables.
 
-Tests (`*.test.ts`): golden cases worked by hand from the IRS tables (arithmetic is in the comments), bracket continuity and Rev. Proc. base amounts, 500-case invariant test (lines sum to gross), validation, rate-schema tests. **They verify the arithmetic, not the IRS.** Official Pub 15-T worked examples must still be added at sign-off.
+Tests (`*.test.ts`): federal golden cases worked by hand from the IRS tables (arithmetic is in the comments), bracket continuity and Rev. Proc. base amounts, 500-case invariant test (lines sum to gross), validation, rate-schema tests; `state.test.ts` reproduces the **official worked examples** from Georgia (two), North Carolina and Illinois (formula check) plus hand-computed Ohio and Washington cases. Federal tests verify arithmetic, not the IRS: official Pub 15-T worked examples must still be added at sign-off.
 
 ### Verified 2026 federal facts
 
@@ -63,12 +63,29 @@ Read from IRS Rev. Proc. 2025-32 (https://www.irs.gov/pub/irs-drop/rp-25-32.pdf)
 - Standard deduction: single $16,100, married filing jointly $32,200, head of household $24,150.
 - Brackets (10/12/22/24/32/35/37%), upper limits. Single: 12,400 / 50,400 / 105,700 / 201,775 / 256,225 / 640,600. MFJ: 24,800 / 100,800 / 211,400 / 403,550 / 512,450 / 768,700. HoH: 17,700 / 67,450 / 105,700 / 201,750 / 256,200 / 640,600. Base amounts in the Rev. Proc. tables are asserted in tests.
 
-**Not verified** (secondary sources or memory): Social Security wage base $184,500 (SSA pages return 403 to automated fetch); Additional Medicare $200,000 withholding threshold; the state "no income tax" statements and every sentence in `src/lib/states.ts`; 2026 Pub 15-T tables/worksheets themselves; Illinois 4.95% (needed for v1.1); W-4 dependent credit amounts.
+### Verified 2026 state facts (read from official documents 2026-10-18, still unsigned)
+
+- **Illinois** (Booklet IL-700-T, R-12/25): 4.95% flat, $2,925 per line-1 allowance, no standard deduction. Official example $800 weekly with 2 line-1 + 2 line-2 allowances = $32.13.
+- **North Carolina** (2026 NC-30, annualized method): withholding rate 4.09% (3.99% + 0.1%), standard deduction $12,750 single/married and $19,125 head of household, $2,500 per allowance, rounded to the whole dollar. Official example: $450 weekly, 2 allowances = $4.
+- **Georgia** (2026 Employer's Tax Guide, revised June 2026, pp. 51-52): 4.99% flat (was 5.19%; employers could switch from 2026-05-11), standard deduction $30,000 married filing jointly / $15,000 otherwise, $5,000 per dependent. Official example: $2,000 semi-monthly, married, 1 dependent = $27.03.
+- **Ohio** (Optional Computer Formula Rev. 07/26, effective Aug 1 2026; the PDF text layer is broken so it was read from the rendered page): TW = pay x periods - $650 x exemptions; up to $26,050 x 1.6%; $26,050-$100,000: $416.80 + 2.99% of excess; over $100,000: $2,627.91 + 3.4% of excess. No official worked example.
+- **Washington** (paidleave.wa.gov, wacaresfund.wa.gov): PFML total 1.13% of gross wages, employees pay 71.43%, capped at $184,500; WA Cares 0.58% of gross wages, no cap, employee-paid. "No personal income tax" is from general knowledge, not read from dor.wa.gov.
+
+### Closed on 2026-10-18 before sign-off
+
+- Social Security wage base $184,500: SSA (via search results quoting ssa.gov; its pages block automated fetch) and the WA Paid Leave page.
+- Additional Medicare 0.9% over $200,000, no filing-status difference: IRS Topic 751.
+- Pub 15-T (2026) percentage method read: single and married schedules and the $8,600 / $12,900 adjustments match the engine's standard-deduction method exactly; asserted in a test.
+- "No state income tax on wages" for TX (Comptroller), FL (Department of Revenue FAQ), NV (Department of Taxation), TN (Department of Revenue; Hall tax repealed 2021) and WA (Department of Revenue). Note: WA adds a 9.9% tax on income over $1,000,000 from 2028 (SB 6346), which does not affect wages in 2026.
+
+**Still not independently verified**: the Pub 15-T head of household schedule (rests on Rev. Proc. 2025-32 only); every sentence in `src/lib/states.ts` (editorial: employer-paid programs, "no local income tax" claims, Ohio municipal and school district taxes); W-4 dependent credit amounts; whether WA PFML wages exclude Section 125 premiums and the under-50-employee rule; Washington workers' compensation employee share (not researched); whether allowance defaults of 0 are sensible; a second reviewer for the Ohio figures, which were read from a rendered PDF page.
 
 ## 6. Rate data and the sign-off gate
 
-- Files: `src/data/rates/<jurisdiction>-<year>.json` (`federal-2026.json`, `tx-2026.json`, `fl`, `tn`, `nv`). Fields: jurisdiction, taxYear, effectiveFrom/To, type, method, parameters, sources[{name,url}], retrievedOn, verifiedBy, verifiedOn, notes. Schemas: `src/lib/rates-schema.ts` (zod; a malformed file fails the build). Loader: `src/lib/rates.ts`.
-- All files currently have `verifiedBy: null`. State files have `retrievedOn: null` (entered from general knowledge, not read from the agency page).
+- Files: `src/data/rates/<jurisdiction>-<year>.json` (`federal-2026.json` and state files `tx fl tn nv wa il nc oh ga`). Fields: jurisdiction, taxYear, effectiveFrom/To, type, method, parameters, sources[{name,url}], retrievedOn, verifiedBy, verifiedOn, notes. Schemas: `src/lib/rates-schema.ts` (zod; a malformed file fails the build). State files are a discriminated union on `method` (`none`, `flat`, `tiered`) plus an optional `programs` array. A new method needs an engine implementation, a `describeStateRules` branch (`src/lib/state-methods.ts`) and golden tests from the state's official examples first. Loader: `src/lib/rates.ts`.
+- **Sign-off status: all files signed** (`verifiedBy: "Fardeen"`, `verifiedOn: 2026-10-18`). Everything below about `null` values describes the state before that and is kept for the record.
+- Before sign-off all files had `verifiedBy: null`. TX/FL/TN/NV have `retrievedOn: null` (entered from general knowledge, not read from the agency page); WA/IL/NC/OH/GA have `retrievedOn: 2026-10-18` because their numbers were read from the official documents listed in each file's `sources` and `notes`.
+- Page text with numbers (rules list, answer sentence, table notes, methodology state section) is generated from the rate files by `src/lib/state-methods.ts`, so hand-written copy in `states.ts` deliberately contains no rates.
 - `isPublishable(code)` = federal AND state file signed off, or `NEXT_PUBLIC_ALLOW_UNVERIFIED=1`. Production leaves the flag unset, so unsigned states are not generated, not listed in the sitemap/llms.txt/pickers, and the overtime/home calculators hide the state-dependent parts.
 - The on-page "Rates verified {date}" is `min(federal.verifiedOn, state.verifiedOn)`. Unsigned pages show "Preview: rates not signed off yet".
 - Sign-off = a person compares the file and the state's editorial text (`src/lib/states.ts`) with official sources, tests pass, then `npm run signoff -- federal tx fl tn nv --by "Name"`, then `npm run check:rates:prod` (fails if anything is unsigned). Details: `docs/runbook.md`.
@@ -125,7 +142,7 @@ Kill or pivot if fewer than about 5k organic visits a month across 50+ indexed p
 ## 13. Roadmap (from the PRD)
 
 - v1 (about 95k searches: TX 46k, FL 32.7k, TN 11.2k, NV 5.1k): federal engine, TX/FL/TN/NV, top 20-30 converter pages, overtime, trust pages. **Code done; awaiting sign-off and deployment.**
-- v1.1: WA, IL, NC, OH (user-entered local rate), GA. Needs new state methods (flat rate, official withholding formulas) with golden tests from official worksheets.
+- v1.1: WA, IL, NC, OH (user-entered local rate), GA. **Code done 2026-10-18** (flat and tiered methods, state allowances, WA programs, official-example tests); awaiting sign-off like v1. Search volume for these states is not yet totaled in Ahrefs.
 - v1.2: 8-10 states a month (CA, NJ, PA, MI, VA, CO ...).
 - v2: bonus/supplemental pay, pre-tax options, state comparison tool, data-study pages.
 - Milestones: M0 setup (week 1), M1 engine (weeks 1-3), M2 launch 30+ pages (weeks 3-5), M3 AdSense application (weeks 5-8), M4 25+ states (months 2-5), M5 gate (month 6), M6 scale (months 7-12). Non-goals for v1: accounts, saved data, payroll, filing, tax advice, pay-stub generator, local-tax databases, non-US countries.
@@ -134,7 +151,7 @@ Kill or pivot if fewer than about 5k organic visits a month across 50+ indexed p
 
 Human decisions: who approves rate changes (owner or named reviewer); analytics tool and consent setup; AdSense payee and tax setup (accountant); UK/Canada after year one; dark mode vs light only; contact mailbox (`hello@paycheckdecoder.com` is a placeholder, not created).
 
-Before launch (see `docs/runbook.md`): trademark check for "Paycheck Decoder" (USPTO + web, not done); buy domain (checked 2026-10-18 on Vercel: $11.25 first year and renewal, not purchased); lawyer review of Privacy/Terms/Disclaimer; sign off rate files; verify SS wage base and add Pub 15-T worked examples as golden tests; Vercel plan terms for an ad-supported site; confirm top 25 converter wages in Ahrefs (the list is a guess); favicon exists (`src/app/icon.svg`) but there is **no social/OG image yet**; add `ads.txt`; Google Search Console (DNS) and Bing Webmaster; Lighthouse/axe pass on real devices.
+Before launch (see `docs/runbook.md`): have a second person re-check the signed files, especially Ohio and the editorial text; trademark check for "Paycheck Decoder" (USPTO + web, not done); buy domain (checked 2026-10-18 on Vercel: $11.25 first year and renewal, not purchased); lawyer review of Privacy/Terms/Disclaimer; sign off rate files; verify SS wage base and add Pub 15-T worked examples as golden tests; Vercel plan terms for an ad-supported site; confirm top 25 converter wages in Ahrefs (the list is a guess); favicon exists (`src/app/icon.svg`) but there is **no social/OG image yet**; add `ads.txt`; Google Search Console (DNS) and Bing Webmaster; Lighthouse/axe pass on real devices.
 
 Engineering backlog: weekly rate-source monitor and PR bot; weekly summary (unindexed pages, pages losing position, rate files due); W-4 step 2 and supplemental wages; mobile ad placement; JSON-LD `llms.txt` pointers to a rates page; run smoke test in CI; "Guides" pages (`/guides/[state]-payroll-taxes`, v1.1+); Ahrefs volume beyond top 100 rows and per-state SERP competitors (not verified).
 

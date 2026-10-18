@@ -6,12 +6,23 @@
   "type": "state",
   "method": "none",
   "parameters": {},
-  "sources": [{ "name": "Tennessee Department of Revenue", "url": "https://www.tn.gov/revenue.html" }],
-  "retrievedOn": null,
-  "verifiedBy": null,
-  "verifiedOn": null,
+  "sources": [
+    {
+      "name": "Tennessee Department of Revenue: Hall income tax",
+      "url": "https://www.tn.gov/revenue/taxes/hall-income-tax.html"
+    },
+    {
+      "name": "Tennessee Revenue: Hall income tax repealed beginning January 1, 2021",
+      "url": "https://revenue.support.tn.gov/hc/en-us/articles/360057828631-HIT-3-Hall-Income-Tax-Repealed-Beginning-January-1-2021"
+    }
+  ],
+  "retrievedOn": "2026-10-18",
+  "verifiedBy": "Fardeen",
+  "verifiedOn": "2026-10-18",
   "notes": [
-    "No state income tax withheld from wages and no employee-paid state payroll programs. Employer-side taxes do not reduce employee pay.",
-    "Entered from general knowledge, not yet read from the agency source. Read the source and sign off before publishing."
-  ]
+    "No state income tax is withheld from wages and no employee-paid state payroll programs. Employer-side taxes do not reduce employee pay.",
+    "Tennessee Department of Revenue states the Hall tax never applied to wages and was repealed for tax years from 2021, and that Tennessee has no income tax withholding requirement (read via search result 2026-10-18).",
+    "Sign-off recorded 2026-10-18 on the owner's instruction, after the numbers were compared with the sources listed in this file. Editorial text in src/lib/states.ts and any limits listed above were not independently reviewed."
+  ],
+  "programs": []
 }

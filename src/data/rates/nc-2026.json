@@ -1,0 +1,33 @@
+{
+  "jurisdiction": "NC",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "flat",
+  "parameters": {
+    "rate": 0.0409,
+    "standardDeduction": {
+      "single": 12750,
+      "married": 12750,
+      "head": 19125
+    },
+    "allowanceAmount": 2500,
+    "roundToDollar": true
+  },
+  "programs": [],
+  "sources": [
+    {
+      "name": "NC-30 2026 Income Tax Withholding Tables and Instructions",
+      "url": "https://www.ncdor.gov/income-tax-withholding-tables-and-instructions-employers/open"
+    }
+  ],
+  "retrievedOn": "2026-10-18",
+  "verifiedBy": "Fardeen",
+  "verifiedOn": "2026-10-18",
+  "notes": [
+    "Read from the 2026 NC-30, annualized method (pages 17-20), on 2026-10-18: withholding rate 4.09% (3.99% income tax rate plus 0.1%), standard deduction $12,750 single/married and $19,125 head of household, $2,500 per allowance, result rounded to the nearest whole dollar.",
+    "Official worked example on page 20: $450 weekly, single, 2 allowances withholds $4.",
+    "Sign-off recorded 2026-10-18 on the owner's instruction, after the numbers were compared with the sources listed in this file. Editorial text in src/lib/states.ts and any limits listed above were not independently reviewed."
+  ]
+}

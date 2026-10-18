@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { ProsePage } from "@/components/ProsePage";
 import { formatWhole } from "@/engine";
-import { federalRates, isVerified } from "@/lib/rates";
+import { federalRates, getStateRates, isVerified, publishableStates } from "@/lib/rates";
+import { describeStateRules } from "@/lib/state-methods";
+import { STATES } from "@/lib/states";
 import { pageMetadata } from "@/lib/seo";
 import { TAX_YEAR, formatLongDate } from "@/lib/site";
 
@@ -80,10 +82,30 @@ export default function MethodologyPage() {
         </div>
       ))}
 
+      <h2>State withholding rules</h2>
+      <p>
+        Each state calculator follows that state&apos;s own employer withholding method, with its source
+        linked on the state page. The rules below are read from the same data files the calculators use.
+      </p>
+      {publishableStates().map((code) => (
+        <div key={code}>
+          <h3>{STATES[code].name}</h3>
+          <ul>
+            {describeStateRules(getStateRates(code)).map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
       <h2>What is not included</h2>
       <ul>
         <li>The Form W-4 step 2 checkbox for multiple jobs, and supplemental wage rates for bonuses.</li>
         <li>Local taxes, unless you enter your own rate.</li>
+        <li>
+          State-specific extras such as Illinois line 2 allowances, Washington program exemptions, and
+          two-earner filing rules on Georgia Form G-4.
+        </li>
         <li>
           Wages that cross the Social Security wage base part-way through the year. We spread the cap evenly
           across paychecks.

@@ -67,6 +67,66 @@ try {
     await page.close();
   }
 
+  // v1.1 states: values are hand-computed from each state's official method (see src/engine/state.test.ts).
+  {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    const problems: string[] = [];
+    page.on("pageerror", (e) => problems.push(String(e)));
+    page.on("console", (m) => m.type() === "error" && problems.push(m.text()));
+    const legend = async () => (await page.locator(".pd-legend").first().innerText()).replace(/\s+/g, " ");
+
+    await page.goto(`${base}/paycheck-calculator/illinois`, { waitUntil: "networkidle" });
+    check(
+      "illinois: state legend $99.00",
+      (await legend()).includes("State and local tax $99.00"),
+      await legend(),
+    );
+    check("illinois: allowance field shown", await page.locator("#stateAllowances").isVisible());
+    await page.fill("#stateAllowances", "2");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    // 52,000 - 2 * 2,925 = 46,150 * 4.95% = 2,284.425 / 26 = 87.86
+    check("illinois: allowances lower withholding", (await legend()).includes("$87.86"), await legend());
+
+    await page.goto(`${base}/paycheck-calculator/georgia`, { waitUntil: "networkidle" });
+    check(
+      "georgia: state legend $71.01",
+      (await legend()).includes("State and local tax $71.01"),
+      await legend(),
+    );
+
+    await page.goto(`${base}/paycheck-calculator/north-carolina`, { waitUntil: "networkidle" });
+    check(
+      "north carolina: whole-dollar state line",
+      (await legend()).includes("State and local tax $") &&
+        /State and local tax \$\d+\.00 /.test(await legend()),
+      await legend(),
+    );
+
+    await page.goto(`${base}/paycheck-calculator/ohio`, { waitUntil: "networkidle" });
+    check(
+      "ohio: state legend $45.87",
+      (await legend()).includes("State and local tax $45.87"),
+      await legend(),
+    );
+
+    await page.goto(`${base}/paycheck-calculator/washington`, { waitUntil: "networkidle" });
+    check("washington: no allowance field", (await page.locator("#stateAllowances").count()) === 0);
+    check(
+      "washington: programs row in table",
+      (await page.locator("table.pd-table").first().innerText()).includes("State payroll programs"),
+    );
+    check(
+      "washington: programs in legend $27.74",
+      (await legend()).includes("State and local tax $27.74"),
+      await legend(),
+    );
+
+    await page.goto(`${base}/paycheck-calculator/texas`, { waitUntil: "networkidle" });
+    check("texas: still no state tax", !(await legend()).includes("State and local tax"));
+    check("new states: no console errors", problems.length === 0, problems.join(" | "));
+    await page.close();
+  }
+
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const problems: string[] = [];
   page.on("pageerror", (e) => problems.push(String(e)));

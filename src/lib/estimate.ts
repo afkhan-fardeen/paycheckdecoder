@@ -21,6 +21,7 @@ export interface FormState {
   preTax401k: string;
   preTaxHealth: string;
   postTax: string;
+  stateAllowances: string;
   localRate: string;
   credits: string;
   otherIncome: string;
@@ -39,6 +40,7 @@ export const DEFAULT_FORM: FormState = {
   preTax401k: "",
   preTaxHealth: "",
   postTax: "",
+  stateAllowances: "",
   localRate: "",
   credits: "",
   otherIncome: "",
@@ -58,6 +60,7 @@ const ISSUE_FIELD: Record<string, FieldName> = {
   preTax401k: "preTax401k",
   preTaxHealth: "preTaxHealth",
   postTax: "postTax",
+  stateAllowances: "stateAllowances",
   localRatePercent: "localRate",
   w4: "credits",
 };
@@ -86,6 +89,7 @@ export function computeEstimate(form: FormState, code: StateCode): Estimate {
   const preTax401k = optional("preTax401k", "your 401(k) amount");
   const preTaxHealth = optional("preTaxHealth", "your health insurance amount");
   const postTax = optional("postTax", "your after-tax deductions");
+  const stateAllowances = optional("stateAllowances", "the number of allowances");
   const localRate = optional("localRate", "a local tax rate");
   const credits = optional("credits", "W-4 credits");
   const otherIncome = optional("otherIncome", "other income");
@@ -106,6 +110,7 @@ export function computeEstimate(form: FormState, code: StateCode): Estimate {
     preTax401k,
     preTaxHealth,
     postTax,
+    stateAllowances,
     localRatePercent: localRate,
     w4: {
       creditsPerYear: credits,

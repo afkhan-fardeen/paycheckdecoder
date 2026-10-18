@@ -1,0 +1,35 @@
+{
+  "jurisdiction": "GA",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "flat",
+  "parameters": {
+    "rate": 0.0499,
+    "standardDeduction": {
+      "single": 15000,
+      "married": 30000,
+      "head": 15000
+    },
+    "allowanceAmount": 5000,
+    "roundToDollar": false
+  },
+  "programs": [],
+  "sources": [
+    {
+      "name": "Georgia 2026 Employer's Tax Guide (updated June 2026)",
+      "url": "https://dor.georgia.gov/document/document/2026-employers-tax-guide-updated-june-2026/download"
+    }
+  ],
+  "retrievedOn": "2026-10-18",
+  "verifiedBy": "Fardeen",
+  "verifiedOn": "2026-10-18",
+  "notes": [
+    "Read from the revised 2026 guide, percentage method (pages 51-52), on 2026-10-18: 4.99% rate, standard deduction $30,000 married filing jointly (spouse not working) and $15,000 single, head of household or married filing separate, $5,000 per dependent allowance.",
+    "The guide says employers had to keep withholding 5.19% until the rate change took effect and may start withholding 4.99% from 2026-05-11. Paychecks before the switch may have used 5.19%.",
+    "The calculator's 'married' status uses the married-filing-jointly deduction. Two-earner couples use $15,000 on Form G-4 and will see lower pay than estimated.",
+    "Official worked example on page 51: $2,000 semi-monthly, married, one dependent withholds $27.03.",
+    "Sign-off recorded 2026-10-18 on the owner's instruction, after the numbers were compared with the sources listed in this file. Editorial text in src/lib/states.ts and any limits listed above were not independently reviewed."
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "jurisdiction": "OH",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "tiered",
+  "parameters": {
+    "allowanceAmount": 650,
+    "tiers": [
+      {
+        "upTo": 26050,
+        "base": 0,
+        "rate": 0.016
+      },
+      {
+        "upTo": 100000,
+        "base": 416.8,
+        "rate": 0.0299
+      },
+      {
+        "upTo": null,
+        "base": 2627.91,
+        "rate": 0.034
+      }
+    ]
+  },
+  "programs": [],
+  "sources": [
+    {
+      "name": "Ohio Optional Computer Formula (effective August 1, 2026)",
+      "url": "https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/employer_withholding/2026%20Withholding%20Tables/WHT_OptionalComputerFormula_2026.pdf"
+    }
+  ],
+  "retrievedOn": "2026-10-18",
+  "verifiedBy": "Fardeen",
+  "verifiedOn": "2026-10-18",
+  "notes": [
+    "Read from the Ohio Department of Taxation Optional Computer Formula, Rev. 07/26, effective August 1, 2026, on 2026-10-18 (the PDF text layer is unreadable, so the figures were read from the rendered page): TW = annual pay - $650 per exemption; up to $26,050 withholding = TW x 1.600%; $26,050-$100,000 = $416.80 + 2.990% of the excess over $26,050; over $100,000 = $2,627.91 + 3.400% of the excess over $100,000.",
+    "These are withholding rates, not Ohio's statutory income tax rate. Payrolls ending before 2026-08-01 used earlier tables (Oct 1, 2025). The calculator uses the current tables for the whole year.",
+    "Ohio municipal and school district income taxes are not included unless the visitor enters a local rate.",
+    "No official worked example is published with the formula; golden tests are hand-computed from it.",
+    "Sign-off recorded 2026-10-18 on the owner's instruction, after the numbers were compared with the sources listed in this file. Editorial text in src/lib/states.ts and any limits listed above were not independently reviewed."
+  ]
+}

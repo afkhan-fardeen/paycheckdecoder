@@ -2,12 +2,15 @@ import { formatCents, formatPercent, type LineKey, type PaycheckResult } from "@
 
 interface Props {
   result: PaycheckResult;
-  stateName: string;
+  /** Note under the state income tax line, from the state's rate file. */
+  stateNote: string;
+  /** Names of employee-paid state programs, or empty. */
+  programNames: string[];
   frequencyLabel: string;
 }
 
 /** The accessible, crawlable version of the breakdown: a real table with caption and headers. */
-export function BreakdownTable({ result, stateName, frequencyLabel }: Props) {
+export function BreakdownTable({ result, stateNote, programNames, frequencyLabel }: Props) {
   const { lines, periods } = result;
   const gross = lines.gross.perPeriod;
   const share = (cents: number) => (gross === 0 ? "0%" : formatPercent(cents / gross));
@@ -64,7 +67,8 @@ export function BreakdownTable({ result, stateName, frequencyLabel }: Props) {
           {row("socialSecurity", "Social Security", "6.2% up to the annual wage base", true)}
           {row("medicare", "Medicare", "1.45% of all wages", true)}
           {row("additionalMedicare", "Additional Medicare", "0.9% of wages over $200,000")}
-          {row("state", "State income tax", `${stateName} has no state income tax`, true)}
+          {row("state", "State income tax", stateNote, true)}
+          {row("statePrograms", "State payroll programs", programNames.join(" and "))}
           {row("local", "Local income tax", "Your rate, applied to income-tax wages")}
           {row("postTax", "After-tax deductions")}
           <tr className="is-total">

@@ -3,6 +3,11 @@ import flJson from "@/data/rates/fl-2026.json";
 import nvJson from "@/data/rates/nv-2026.json";
 import tnJson from "@/data/rates/tn-2026.json";
 import txJson from "@/data/rates/tx-2026.json";
+import gaJson from "@/data/rates/ga-2026.json";
+import ilJson from "@/data/rates/il-2026.json";
+import ncJson from "@/data/rates/nc-2026.json";
+import ohJson from "@/data/rates/oh-2026.json";
+import waJson from "@/data/rates/wa-2026.json";
 import { federalRatesSchema, stateRatesSchema, type RateFile, type StateRates } from "./rates-schema";
 
 /** Parsed at import time, so malformed rate files fail the build instead of reaching a page. */
@@ -13,6 +18,11 @@ const stateFiles = {
   FL: stateRatesSchema.parse(flJson),
   TN: stateRatesSchema.parse(tnJson),
   NV: stateRatesSchema.parse(nvJson),
+  WA: stateRatesSchema.parse(waJson),
+  IL: stateRatesSchema.parse(ilJson),
+  NC: stateRatesSchema.parse(ncJson),
+  OH: stateRatesSchema.parse(ohJson),
+  GA: stateRatesSchema.parse(gaJson),
 } as const;
 
 export type StateCode = keyof typeof stateFiles;

@@ -6,52 +6,139 @@
   "type": "federal",
   "method": "brackets",
   "parameters": {
-    "standardDeduction": { "single": 16100, "married": 32200, "head": 24150 },
+    "standardDeduction": {
+      "single": 16100,
+      "married": 32200,
+      "head": 24150
+    },
     "brackets": {
       "single": [
-        { "upTo": 12400, "rate": 0.1 },
-        { "upTo": 50400, "rate": 0.12 },
-        { "upTo": 105700, "rate": 0.22 },
-        { "upTo": 201775, "rate": 0.24 },
-        { "upTo": 256225, "rate": 0.32 },
-        { "upTo": 640600, "rate": 0.35 },
-        { "upTo": null, "rate": 0.37 }
+        {
+          "upTo": 12400,
+          "rate": 0.1
+        },
+        {
+          "upTo": 50400,
+          "rate": 0.12
+        },
+        {
+          "upTo": 105700,
+          "rate": 0.22
+        },
+        {
+          "upTo": 201775,
+          "rate": 0.24
+        },
+        {
+          "upTo": 256225,
+          "rate": 0.32
+        },
+        {
+          "upTo": 640600,
+          "rate": 0.35
+        },
+        {
+          "upTo": null,
+          "rate": 0.37
+        }
       ],
       "married": [
-        { "upTo": 24800, "rate": 0.1 },
-        { "upTo": 100800, "rate": 0.12 },
-        { "upTo": 211400, "rate": 0.22 },
-        { "upTo": 403550, "rate": 0.24 },
-        { "upTo": 512450, "rate": 0.32 },
-        { "upTo": 768700, "rate": 0.35 },
-        { "upTo": null, "rate": 0.37 }
+        {
+          "upTo": 24800,
+          "rate": 0.1
+        },
+        {
+          "upTo": 100800,
+          "rate": 0.12
+        },
+        {
+          "upTo": 211400,
+          "rate": 0.22
+        },
+        {
+          "upTo": 403550,
+          "rate": 0.24
+        },
+        {
+          "upTo": 512450,
+          "rate": 0.32
+        },
+        {
+          "upTo": 768700,
+          "rate": 0.35
+        },
+        {
+          "upTo": null,
+          "rate": 0.37
+        }
       ],
       "head": [
-        { "upTo": 17700, "rate": 0.1 },
-        { "upTo": 67450, "rate": 0.12 },
-        { "upTo": 105700, "rate": 0.22 },
-        { "upTo": 201750, "rate": 0.24 },
-        { "upTo": 256200, "rate": 0.32 },
-        { "upTo": 640600, "rate": 0.35 },
-        { "upTo": null, "rate": 0.37 }
+        {
+          "upTo": 17700,
+          "rate": 0.1
+        },
+        {
+          "upTo": 67450,
+          "rate": 0.12
+        },
+        {
+          "upTo": 105700,
+          "rate": 0.22
+        },
+        {
+          "upTo": 201750,
+          "rate": 0.24
+        },
+        {
+          "upTo": 256200,
+          "rate": 0.32
+        },
+        {
+          "upTo": 640600,
+          "rate": 0.35
+        },
+        {
+          "upTo": null,
+          "rate": 0.37
+        }
       ]
     },
-    "socialSecurity": { "rate": 0.062, "wageBase": 184500 },
-    "medicare": { "rate": 0.0145, "additionalRate": 0.009, "additionalThreshold": 200000 }
+    "socialSecurity": {
+      "rate": 0.062,
+      "wageBase": 184500
+    },
+    "medicare": {
+      "rate": 0.0145,
+      "additionalRate": 0.009,
+      "additionalThreshold": 200000
+    }
   },
   "sources": [
-    { "name": "IRS Rev. Proc. 2025-32", "url": "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf" },
-    { "name": "IRS Publication 15-T", "url": "https://www.irs.gov/publications/p15t" },
-    { "name": "SSA contribution and benefit base", "url": "https://www.ssa.gov/oact/cola/cbb.html" },
-    { "name": "IRS Topic 751", "url": "https://www.irs.gov/taxtopics/tc751" }
+    {
+      "name": "IRS Rev. Proc. 2025-32",
+      "url": "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
+    },
+    {
+      "name": "IRS Publication 15-T (2026)",
+      "url": "https://www.irs.gov/publications/p15t"
+    },
+    {
+      "name": "SSA: maximum taxable earnings",
+      "url": "https://www.ssa.gov/faqs/en/questions/KA-02387.html"
+    },
+    {
+      "name": "IRS Topic 751",
+      "url": "https://www.irs.gov/taxtopics/tc751"
+    }
   ],
   "retrievedOn": "2026-10-18",
-  "verifiedBy": null,
-  "verifiedOn": null,
+  "verifiedBy": "Fardeen",
+  "verifiedOn": "2026-10-18",
   "notes": [
     "Brackets and standard deductions read from IRS Rev. Proc. 2025-32 sections 4.01 and 4.14 on 2026-10-18.",
-    "Social Security wage base 184500 comes from secondary sources: the SSA page blocked automated fetch. Confirm against SSA before sign-off.",
-    "Additional Medicare 0.9% above 200000 of wages is the employer withholding threshold regardless of filing status (IRS Topic 751); confirm at sign-off.",
-    "The engine reproduces Pub 15-T percentage-method results by deducting the standard deduction and applying the Rev. Proc. brackets. Compare against the current Pub 15-T tables and worksheet examples at sign-off."
+    "Pub 15-T (2026) automated percentage method read on 2026-10-18: W-4 step 1(g) adjustment $8,600 (all but married filing jointly) and $12,900 (married filing jointly); zero-rate bands $7,500 and $19,300. Adjustment plus band equals the standard deduction ($16,100 and $32,200), so the engine's deduction-then-brackets method gives the same tax. Single and married schedules are asserted in tests; the head of household schedule was not read and rests on Rev. Proc. 2025-32 alone.",
+    "Social Security wage base $184,500 confirmed from SSA search results quoting ssa.gov (SSA's own pages block automated fetch) and the WA Paid Leave page, which states the same 2026 Social Security cap.",
+    "Additional Medicare 0.9% on wages over $200,000 withheld by employers without regard to filing status: confirmed from IRS Topic 751 on 2026-10-18.",
+    "Sign-off recorded 2026-10-18 on the owner's instruction, after the numbers were compared with the sources listed in this file. Editorial text in src/lib/states.ts and any limits listed above were not independently reviewed."
   ]
 }

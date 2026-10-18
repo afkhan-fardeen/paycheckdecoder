@@ -1,0 +1,50 @@
+{
+  "jurisdiction": "WA",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "none",
+  "parameters": {},
+  "programs": [
+    {
+      "key": "wa-pfml",
+      "name": "Paid Family and Medical Leave",
+      "rate": 0.0113,
+      "employeeShare": 0.7143,
+      "wageCap": 184500
+    },
+    {
+      "key": "wa-cares",
+      "name": "WA Cares Fund",
+      "rate": 0.0058,
+      "employeeShare": 1,
+      "wageCap": null
+    }
+  ],
+  "sources": [
+    {
+      "name": "Washington Paid Family and Medical Leave: estimate payments",
+      "url": "https://paidleave.wa.gov/estimate-your-paid-leave-payments/"
+    },
+    {
+      "name": "WA Cares Fund: employers",
+      "url": "https://wacaresfund.wa.gov/employers"
+    },
+    {
+      "name": "Washington Department of Revenue: income tax",
+      "url": "https://dor.wa.gov/taxes-rates/income-tax"
+    }
+  ],
+  "retrievedOn": "2026-10-18",
+  "verifiedBy": "Fardeen",
+  "verifiedOn": "2026-10-18",
+  "notes": [
+    "Paid Family and Medical Leave 2026 (paidleave.wa.gov, read 2026-10-18): total premium 1.13% of gross wages up to the Social Security cap ($184,500); employees pay 71.43% of it.",
+    "WA Cares (paidleave.wa.gov and wacaresfund.wa.gov): 0.58% of gross wages, no cap, paid entirely by the employee. Employees with an approved exemption pay nothing; exemptions are not modelled.",
+    "Washington Department of Revenue states the state has no individual income tax (read via search result 2026-10-18). A 9.9% tax on adjusted gross income over $1,000,000 starts January 1, 2028 (SB 6346); it does not apply to 2026 wages.",
+    "The PFML employee share is applied to gross pay before any deductions. Confirm whether Section 125 premiums reduce PFML wages, and whether small employers (under 50) withhold the same share, in the ESD employer toolkit at sign-off.",
+    "Washington workers' compensation can also carry an employee-paid share. This is not researched or modelled.",
+    "Sign-off recorded 2026-10-18 on the owner's instruction, after the numbers were compared with the sources listed in this file. Editorial text in src/lib/states.ts and any limits listed above were not independently reviewed."
+  ]
+}

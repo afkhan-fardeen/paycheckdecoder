@@ -19,6 +19,7 @@ import {
   type StateCode,
 } from "@/lib/rates";
 import { pageMetadata } from "@/lib/seo";
+import { describeStateRules, stateAnswerNote, taxPhrase } from "@/lib/state-methods";
 import { TAX_YEAR, absoluteUrl, formatLongDate } from "@/lib/site";
 import { STATES, stateBySlug } from "@/lib/states";
 
@@ -43,7 +44,7 @@ export async function generateMetadata({
   const r = examplePaycheck(info.code);
   return pageMetadata({
     title: `${info.name} Paycheck Calculator ${TAX_YEAR}`,
-    description: `Estimate your ${info.name} take-home pay for ${TAX_YEAR}. A ${formatWhole(EXAMPLE_SALARY * 100)} salary nets about ${formatWhole(r.lines.net.annual)} a year after federal tax, Social Security and Medicare. No state income tax.`,
+    description: `Estimate your ${info.name} take-home pay for ${TAX_YEAR}. A ${formatWhole(EXAMPLE_SALARY * 100)} salary nets about ${formatWhole(r.lines.net.annual)} a year after federal and state withholding, Social Security and Medicare.`,
     path: `/paycheck-calculator/${info.slug}`,
   });
 }
@@ -57,6 +58,7 @@ export default async function StatePage({ params }: PageProps<"/paycheck-calcula
   const code: StateCode = info.code;
   const path = `/paycheck-calculator/${info.slug}`;
   const example = examplePaycheck(code);
+  const stateRates = getStateRates(code);
   const verifiedOn = lastVerifiedOn(code);
   const signed = hasSignOff(code);
   const reviewer = getStateRates(code).verifiedBy ?? federalRates.verifiedBy;
@@ -95,17 +97,23 @@ export default async function StatePage({ params }: PageProps<"/paycheck-calcula
             At a {formatWhole(EXAMPLE_SALARY * 100)} salary in {info.name}
           </b>
           , filing single, you take home about <b>{formatWhole(example.lines.net.annual)} a year</b>, or{" "}
-          <b>{formatCents(example.lines.net.perPeriod)} every two weeks</b>, after federal income tax, Social
-          Security and Medicare. {info.name} has no state income tax.
+          <b>{formatCents(example.lines.net.perPeriod)} every two weeks</b>, after{" "}
+          {taxPhrase(info.name, stateRates)}. {stateAnswerNote(info.name, stateRates)}
         </AnswerBlock>
       </header>
 
-      <Calculator code={code} stateName={info.name} />
+      <Calculator code={code} stateName={info.name} allowanceLabel={info.allowanceLabel} />
 
       <ContentColumns>
         <article className="block" style={{ gap: 12 }}>
           <h2>How {info.name} payroll tax works</h2>
           <p style={{ color: "var(--ink-muted)", maxWidth: 640 }}>{info.structure}</p>
+          <h3>{info.name} withholding rules used in this calculator</h3>
+          <ul style={{ margin: 0, paddingLeft: "1.25rem", display: "grid", gap: 8, maxWidth: 640 }}>
+            {describeStateRules(stateRates).map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
           <ul style={{ margin: 0, paddingLeft: "1.25rem", display: "grid", gap: 8, maxWidth: 640 }}>
             {info.programs.map((p) => (
               <li key={p.name}>

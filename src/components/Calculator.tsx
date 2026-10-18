@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { breakdownSlices, formatCents, formatPercent, formatWhole } from "@/engine";
 import { DEFAULT_FORM, computeEstimate, type FormState } from "@/lib/estimate";
 import { FILING_LABEL, FREQUENCY_LABEL, FREQUENCY_PER } from "@/lib/labels";
-import type { StateCode } from "@/lib/rates";
+import { getStateRates, type StateCode } from "@/lib/rates";
+import { stateTableNote } from "@/lib/state-methods";
 import { BreakdownBar } from "./BreakdownBar";
 import { BreakdownTable } from "./BreakdownTable";
 import { Field } from "./Field";
@@ -16,9 +17,12 @@ const APPLY_DELAY_MS = 500;
 interface Props {
   code: StateCode;
   stateName: string;
+  /** Label for the state allowance field. Omitted when the state has none. */
+  allowanceLabel?: string;
 }
 
-export function Calculator({ code, stateName }: Props) {
+export function Calculator({ code, stateName, allowanceLabel }: Props) {
+  const stateRates = getStateRates(code);
   const [form, setForm] = useState<FormState>(DEFAULT_FORM);
   const [applied, setApplied] = useState<FormState>(DEFAULT_FORM);
 
@@ -126,6 +130,17 @@ export function Calculator({ code, stateName }: Props) {
               placeholder="0.00"
               error={errors.postTax}
             />
+            {allowanceLabel ? (
+              <Field
+                id="stateAllowances"
+                label={allowanceLabel}
+                value={form.stateAllowances}
+                onChange={set("stateAllowances")}
+                placeholder="0"
+                help="The number on your state form. Leave 0 if unsure."
+                error={errors.stateAllowances}
+              />
+            ) : null}
             <Field
               id="localRate"
               label="Local income tax rate (optional)"
@@ -239,7 +254,8 @@ export function Calculator({ code, stateName }: Props) {
         <section className="pd-card" aria-label="Paycheck breakdown table">
           <BreakdownTable
             result={result}
-            stateName={stateName}
+            stateNote={stateTableNote(stateName, stateRates)}
+            programNames={stateRates.programs.map((p) => p.name)}
             frequencyLabel={FREQUENCY_LABEL[applied.frequency].toLowerCase()}
           />
         </section>

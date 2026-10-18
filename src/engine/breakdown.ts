@@ -31,7 +31,11 @@ export function breakdownSlices(result: PaycheckResult): Slice[] {
     make("federal", "Federal income tax", lines.federal.perPeriod),
     make("social", "Social Security", lines.socialSecurity.perPeriod),
     make("medicare", "Medicare", lines.medicare.perPeriod + lines.additionalMedicare.perPeriod),
-    make("state", "State and local tax", lines.state.perPeriod + lines.local.perPeriod),
+    make(
+      "state",
+      "State and local tax",
+      lines.state.perPeriod + lines.statePrograms.perPeriod + lines.local.perPeriod,
+    ),
     make("deductions", "Deductions", result.totalDeductions.perPeriod),
   ];
 }
