@@ -81,7 +81,15 @@ try {
       (await legend()).includes("State and local tax $99.00"),
       await legend(),
     );
-    check("illinois: allowance field shown", await page.locator("#stateAllowances").isVisible());
+    check(
+      "illinois: allowance field is inside a collapsed section",
+      !(await page.locator("#stateAllowances").isVisible()),
+    );
+    await page.getByText("Deductions and extras").click();
+    check(
+      "illinois: allowance field shown after opening",
+      await page.locator("#stateAllowances").isVisible(),
+    );
     await page.fill("#stateAllowances", "2");
     await page.getByRole("button", { name: "Calculate" }).click();
     // 52,000 - 2 * 2,925 = 46,150 * 4.95% = 2,284.425 / 26 = 87.86
@@ -125,6 +133,96 @@ try {
     check("texas: still no state tax", !(await legend()).includes("State and local tax"));
     check("new states: no console errors", problems.length === 0, problems.join(" | "));
     await page.close();
+  }
+
+  // Phone layout: menu, touch targets, overflow at small widths, scroll to result.
+  {
+    const ctx = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      isMobile: true,
+      hasTouch: true,
+    });
+    const page = await ctx.newPage();
+    const problems: string[] = [];
+    page.on("pageerror", (e) => problems.push(String(e)));
+    page.on("console", (m) => m.type() === "error" && problems.push(m.text()));
+    await page.goto(`${base}/paycheck-calculator/texas`, { waitUntil: "networkidle" });
+
+    check(
+      "phone: inline nav hidden, menu button shown",
+      !(await page.locator(".nav-links").isVisible()) && (await page.locator(".menu-btn").isVisible()),
+    );
+    await page.locator(".menu-btn").click();
+    check(
+      "phone: menu opens with links",
+      await page.locator("#mobile-menu").getByRole("link", { name: "Overtime" }).isVisible(),
+    );
+    await page.keyboard.press("Escape");
+    check("phone: Escape closes menu", !(await page.locator("#mobile-menu").isVisible()));
+    await page.locator(".menu-btn").click();
+    await page.locator("#mobile-menu").getByRole("link", { name: "Overtime" }).click();
+    await page.waitForURL("**/overtime-calculator");
+    check("phone: menu link navigates and closes", !(await page.locator("#mobile-menu").isVisible()));
+    await page.goto(`${base}/paycheck-calculator/texas`, { waitUntil: "networkidle" });
+
+    const small = await page.evaluate(() => {
+      const bad: string[] = [];
+      for (const el of document.querySelectorAll<HTMLElement>(
+        ".pd-seg button, .pd-btn, .menu-btn, .pd-control, .pd-details > summary, .chip",
+      )) {
+        const r = el.getBoundingClientRect();
+        if (r.width > 0 && r.height < 43.5)
+          bad.push(`${el.className || el.tagName} ${Math.round(r.height)}px`);
+      }
+      return bad;
+    });
+    check("phone: touch targets at least 44px", small.length === 0, small.join(", "));
+
+    const widths = await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>('.pd-seg[data-n="3"] button')].map((b) =>
+        Math.round(b.getBoundingClientRect().width),
+      ),
+    );
+    check(
+      "phone: 3-option group is an even grid",
+      widths.length === 3 && Math.max(...widths) - Math.min(...widths) <= 1,
+      widths.join(","),
+    );
+
+    const resultTop = async () =>
+      page.evaluate(() => document.getElementById("result")!.getBoundingClientRect().top);
+    check(
+      "phone: result starts below the fold before Calculate",
+      (await resultTop()) > 700,
+      String(await resultTop()),
+    );
+    await page.getByRole("button", { name: "Calculate" }).click();
+    await page.waitForTimeout(900);
+    check(
+      "phone: Calculate scrolls the result into view",
+      (await resultTop()) < 200 && (await resultTop()) > -50,
+      String(await resultTop()),
+    );
+
+    check("phone: no console errors", problems.length === 0, problems.join(" | "));
+    await ctx.close();
+
+    for (const width of [320, 360]) {
+      const p2 = await browser.newPage({ viewport: { width, height: 700 } });
+      for (const path of [
+        "/",
+        "/paycheck-calculator/washington",
+        "/paycheck-calculator/north-carolina",
+        "/overtime-calculator",
+        "/salary/25-an-hour-is-how-much-a-year",
+        "/methodology",
+      ]) {
+        await p2.goto(`${base}${path}`, { waitUntil: "networkidle" });
+        const over = await p2.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+        check(`${width}px ${path}: no horizontal scroll`, over <= 0, `overflow ${over}px`);
+      }
+      await p2.close();
+    }
   }
 
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });

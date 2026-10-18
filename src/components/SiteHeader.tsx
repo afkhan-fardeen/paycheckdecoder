@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SITE_NAME } from "@/lib/site";
+import { MobileNav } from "./MobileNav";
 
 export function SiteHeader() {
   return (
@@ -10,16 +11,11 @@ export function SiteHeader() {
       </Link>
       <nav className="nav-links" aria-label="Main">
         <Link href="/paycheck-calculator">State calculators</Link>
-        <Link className="hide-sm" href="/salary">
-          Hourly to salary
-        </Link>
-        <Link className="hide-sm" href="/overtime-calculator">
-          Overtime
-        </Link>
-        <Link className="hide-sm" href="/methodology">
-          Methodology
-        </Link>
+        <Link href="/salary">Hourly to salary</Link>
+        <Link href="/overtime-calculator">Overtime</Link>
+        <Link href="/methodology">Methodology</Link>
       </nav>
+      <MobileNav />
     </header>
   );
 }

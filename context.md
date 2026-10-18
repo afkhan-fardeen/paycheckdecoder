@@ -14,9 +14,9 @@ Why this niche (Ahrefs, US, checked 2026-10-18): about 400k monthly searches acr
 
 | Doc | Link | Holds |
 | --- | --- | --- |
-| PRD | https://claude.ai/artifact/Kc3Jo1GeheLDubSFPJ1wdL | Scope, releases, SEO, ads, legal, KPIs, publishing plan |
-| Design system | https://claude.ai/artifact/Np4qaArUTBr9KCL6owj617 | Tokens, README brand book, 9 component previews |
-| Design previews | https://claude.ai/artifact/LfXWAxb7Cfe5Ac5CX617Pv | 4 artboards: home, Texas desktop, converter, Texas mobile |
+| PRD | owner's document (link kept by the owner) | Scope, releases, SEO, ads, legal, KPIs, publishing plan |
+| Design system | owner's document (link kept by the owner) | Tokens, README brand book, 9 component previews |
+| Design previews | owner's document (link kept by the owner) | 4 artboards: home, Texas desktop, converter, Texas mobile |
 
 Their CSS is ported into `src/styles/` (tokens.css, components.css, site.css). The previews' dollar figures were sample layout values and are **wrong** (they show $1,721.00 for $2,000 biweekly Texas; the engine gives $1,690.85). Never copy numbers from the previews.
 
@@ -26,7 +26,7 @@ Built and passing: Next.js app, calculation engine, rate files for federal + 9 s
 
 **Not launched.** Nothing is deployed and no domain is bought. v1 is pushed to https://github.com/afkhan-fardeen/paycheckdecoder.git (`main`, commit 222836f); the v1.1 work is **uncommitted** until Fardeen asks.
 
-**All ten rate files (federal + 9 states) were signed off on 2026-10-18** as "Fardeen", on the owner's instruction, after Claude compared the numbers with the official sources in each file (see section 6). A production build now generates all 9 state pages. The gate still exists: any new or changed rate file without a sign-off is hidden from production. Local/preview builds set `NEXT_PUBLIC_ALLOW_UNVERIFIED=1`.
+**All ten rate files (federal + 9 states) were signed off on 2026-10-18** as "Fardeen", on the owner's instruction, after the numbers were compared with the official sources in each file (see section 6). A production build now generates all 9 state pages. The gate still exists: any new or changed rate file without a sign-off is hidden from production. Local/preview builds set `NEXT_PUBLIC_ALLOW_UNVERIFIED=1`.
 
 ## 4. Stack and decisions
 
@@ -115,6 +115,8 @@ Calculator behavior (`src/components/Calculator.tsx`, logic in `src/lib/estimate
 - Breakdown colors: federal blue, Social Security orange, Medicare gold, state teal, deductions slate, net green; always labeled in words. The bar is plain HTML/CSS, no chart library; `BreakdownTable` is the accessible/crawlable twin.
 - Spacing `space-1..8` (4,8,12,16,24,32,48,72), radii 6/10/16/pill, `shadow-sm` on cards, `shadow-md` only on the result panel. No gradients, glows, photos or illustrations. Touch targets >= 44px. Focus ring 3px `focus` with 2px offset, never removed. Contrast: text 4.5:1, meaningful marks 3:1 (WCAG 2.1 AA).
 - Motion: 120ms transitions, disabled under `prefers-reduced-motion`.
+- **Icons:** Lucide (the design system's icon set), 1.5px stroke, decorative (`aria-hidden`) and always beside a text label. Used through the `lucide-react` package so SVGs are bundled into the pages (no runtime CDN fetch: avoids an external dependency, layout shift and a CSP hole). Places: header menu, Calculate/Reset/Open buttons, FAQ and disclosure chevrons, breadcrumb and state-card chevrons, home tool and trust chips (`IconChip`), error and verification stamps.
+- **Mobile (<= 640px):** inline nav collapses to a Menu button (`MobileNav`: Escape and outside-click close, 48px rows); option groups become even grids (`data-n` on `.pd-seg`: 2, 3 or 4 options); optional inputs live in labelled collapsible sections (`Disclosure`: 401(k), health, after-tax, state allowance, local rate; W-4 details) that open themselves if a field inside has an error; buttons share the row; the breakdown table hides the Share column; Calculate scrolls the result into view (below 900px, honours reduced motion); safe-area insets respected. Checked at 320, 360 and 390px in `scripts/smoke.mts`; touch targets are asserted >= 44px.
 - Copy: plain "you", sentence case, no exclamation marks/emoji/hype. Put "estimate" beside every computed figure; never "exact", "official" or "guaranteed". Cents on per-paycheck amounts ($1,721.00), whole dollars on annual headlines ($44,746), percentages at most one decimal. Frequencies: Weekly, Every two weeks, Twice a month, Monthly. Notice: "Estimate only. Your employer's payroll system may differ. Not tax advice." Never imitate an employer document (no pay date, check number, employee ID).
 - Components live in `src/components/`: Calculator, QuickCalculator, HourlyConverter, OvertimeCalculator (client); BreakdownBar, BreakdownTable, AnswerBlock, VerifiedStamp, Faq, StatePicker, Breadcrumbs, AdSlot, ContentColumns, ProsePage, JsonLd, SiteHeader/Footer, PreviewBanner (server); Field, Segmented (client inputs).
 

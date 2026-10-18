@@ -37,7 +37,7 @@ export function BreakdownTable({ result, stateNote, programNames, frequencyLabel
   };
   return (
     <div className="table-scroll">
-      <table className="pd-table">
+      <table className="pd-table is-breakdown">
         <caption>
           Paycheck breakdown, {frequencyLabel} ({periods} paychecks a year)
         </caption>

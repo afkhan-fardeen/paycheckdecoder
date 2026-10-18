@@ -32,7 +32,14 @@ export function Segmented<T extends string>({ label, value, options, onChange }:
       <span className="pd-label" id={labelId}>
         {label}
       </span>
-      <div className="pd-seg" role="radiogroup" aria-labelledby={labelId} ref={group} onKeyDown={onKeyDown}>
+      <div
+        className="pd-seg"
+        data-n={options.length}
+        role="radiogroup"
+        aria-labelledby={labelId}
+        ref={group}
+        onKeyDown={onKeyDown}
+      >
         {options.map((o) => (
           <button
             key={o.value}

@@ -1,2 +1,0 @@
-@context.md
-@AGENTS.md

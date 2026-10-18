@@ -1,5 +1,7 @@
+import { BookOpenCheck, CalendarCheck, Clock, Lock, ShieldCheck, Timer } from "lucide-react";
 import Link from "next/link";
 import { AdSlot } from "@/components/AdSlot";
+import { IconChip } from "@/components/IconChip";
 import { JsonLd } from "@/components/JsonLd";
 import { QuickCalculator } from "@/components/QuickCalculator";
 import { StatePicker } from "@/components/StatePicker";
@@ -65,14 +67,17 @@ export default function HomePage() {
         <h2 id="tools">More tools</h2>
         <div className="trio">
           <Link className="pd-card tool" href="/salary">
+            <IconChip Icon={Clock} />
             <h3>Hourly to salary</h3>
             <p>Turn an hourly wage into yearly, monthly and weekly pay.</p>
           </Link>
           <Link className="pd-card tool" href="/overtime-calculator">
+            <IconChip Icon={Timer} />
             <h3>Overtime calculator</h3>
             <p>Work out time-and-a-half pay for extra hours, with your estimated net.</p>
           </Link>
           <Link className="pd-card tool" href="/methodology">
+            <IconChip Icon={BookOpenCheck} />
             <h3>How we calculate</h3>
             <p>Every rate, formula and source, and how we keep them current.</p>
           </Link>
@@ -83,6 +88,7 @@ export default function HomePage() {
         <h2 id="why">Why trust the numbers</h2>
         <div className="trio">
           <div>
+            <IconChip Icon={ShieldCheck} tone="net" />
             <h3>Official rules</h3>
             <p>
               Federal rules from IRS publications and each state&apos;s revenue department, with the source
@@ -90,10 +96,12 @@ export default function HomePage() {
             </p>
           </div>
           <div>
+            <IconChip Icon={CalendarCheck} tone="net" />
             <h3>Checked and dated</h3>
             <p>Every rate has a verification date, shown next to your result.</p>
           </div>
           <div>
+            <IconChip Icon={Lock} tone="net" />
             <h3>Private by design</h3>
             <p>The math runs in your browser. We do not store your pay.</p>
           </div>

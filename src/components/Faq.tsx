@@ -1,3 +1,4 @@
+import { ChevronDown } from "lucide-react";
 import { JsonLd } from "./JsonLd";
 
 export interface FaqItem {
@@ -20,7 +21,10 @@ export function Faq({
       </h2>
       {items.map((item, i) => (
         <details key={item.q} open={i === 0}>
-          <summary>{item.q}</summary>
+          <summary>
+            <span>{item.q}</span>
+            <ChevronDown size={18} strokeWidth={1.5} aria-hidden="true" />
+          </summary>
           <p>{item.a}</p>
         </details>
       ))}

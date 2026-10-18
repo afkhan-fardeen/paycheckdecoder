@@ -165,7 +165,7 @@ export function OvertimeCalculator({ states }: Props) {
             ) : null}
           </>
         ) : (
-          <p>Fix the errors on the left to see your pay.</p>
+          <p>Fix the errors in the form to see your pay.</p>
         )}
       </div>
     </section>

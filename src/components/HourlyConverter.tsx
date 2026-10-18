@@ -81,7 +81,7 @@ export function HourlyConverter({ initialWage }: { initialWage: number }) {
             </dl>
           </>
         ) : (
-          <p>Fix the errors on the left to see your yearly pay.</p>
+          <p>Fix the errors in the form to see your yearly pay.</p>
         )}
       </div>
     </section>

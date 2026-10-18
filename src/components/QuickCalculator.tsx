@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { breakdownSlices, formatCents, formatWhole, type FilingStatus } from "@/engine";
@@ -68,6 +69,7 @@ export function QuickCalculator({ states }: Props) {
             style={{ textDecoration: "none" }}
           >
             Open the {state.name} calculator
+            <ArrowRight size={18} strokeWidth={1.5} aria-hidden="true" />
           </Link>
         </div>
       </form>
@@ -86,7 +88,7 @@ export function QuickCalculator({ states }: Props) {
             <p className="pd-sample">Estimate only. Not tax advice.</p>
           </>
         ) : (
-          <p>Fix the error on the left to see your estimate.</p>
+          <p>Fix the error in the form to see your estimate.</p>
         )}
       </div>
     </section>

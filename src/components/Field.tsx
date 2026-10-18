@@ -1,5 +1,7 @@
 "use client";
 
+import { CircleAlert } from "lucide-react";
+
 interface Props {
   id: string;
   label: string;
@@ -41,7 +43,10 @@ export function Field({ id, label, value, onChange, prefix, suffix, help, error,
       ) : null}
       {error ? (
         <div className="pd-error" id={`${id}-err`}>
-          <b>Error:</b> {error}
+          <CircleAlert size={16} strokeWidth={1.5} aria-hidden="true" />
+          <span>
+            <b>Error:</b> {error}
+          </span>
         </div>
       ) : null}
     </div>

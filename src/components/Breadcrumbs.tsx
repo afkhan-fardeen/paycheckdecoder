@@ -1,3 +1,4 @@
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { absoluteUrl } from "@/lib/site";
 import { JsonLd } from "./JsonLd";
@@ -14,7 +15,9 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
       <nav className="crumbs" aria-label="Breadcrumb">
         {items.map((item, i) => (
           <span key={item.href}>
-            {i > 0 ? " / " : null}
+            {i > 0 ? (
+              <ChevronRight className="crumb-sep" size={14} strokeWidth={1.5} aria-hidden="true" />
+            ) : null}
             {i < items.length - 1 ? (
               <Link href={item.href}>{item.name}</Link>
             ) : (
