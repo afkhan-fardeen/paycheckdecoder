@@ -1,6 +1,6 @@
 # Paycheck Decoder: project context
 
-Read this first. It replaces opening the PRD, design system and design canvas. Last updated 2026-10-18 (v1.1 states added).
+Read this first. It replaces opening the PRD, design system and design canvas. Last updated 2026-10-19.
 
 ## 1. What this is
 
@@ -12,10 +12,10 @@ Why this niche (Ahrefs, US, checked 2026-10-18): about 400k monthly searches acr
 
 ## 2. Source documents (already read, summarized here)
 
-| Doc | Link | Holds |
-| --- | --- | --- |
-| PRD | owner's document (link kept by the owner) | Scope, releases, SEO, ads, legal, KPIs, publishing plan |
-| Design system | owner's document (link kept by the owner) | Tokens, README brand book, 9 component previews |
+| Doc             | Link                                      | Holds                                                     |
+| --------------- | ----------------------------------------- | --------------------------------------------------------- |
+| PRD             | owner's document (link kept by the owner) | Scope, releases, SEO, ads, legal, KPIs, publishing plan   |
+| Design system   | owner's document (link kept by the owner) | Tokens, README brand book, 9 component previews           |
 | Design previews | owner's document (link kept by the owner) | 4 artboards: home, Texas desktop, converter, Texas mobile |
 
 Their CSS is ported into `src/styles/` (tokens.css, components.css, site.css). The previews' dollar figures were sample layout values and are **wrong** (they show $1,721.00 for $2,000 biweekly Texas; the engine gives $1,690.85). Never copy numbers from the previews.
@@ -24,7 +24,7 @@ Their CSS is ported into `src/styles/` (tokens.css, components.css, site.css). T
 
 Built and passing: Next.js app, calculation engine, rate files for federal + 9 states (TX, FL, TN, NV from v1; WA, IL, NC, OH, GA from v1.1), all page types, trust pages, sitemap/robots/llms.txt, JSON-LD, CI, 51 unit tests, 33 browser smoke checks (desktop and 390px). Build is fully static (50 pages in preview mode).
 
-**Not launched.** Nothing is deployed and no domain is bought. v1 is pushed to https://github.com/afkhan-fardeen/paycheckdecoder.git (`main`, commit 222836f); the v1.1 work is **uncommitted** until Fardeen asks.
+**Not launched.** Nothing is deployed and no domain is bought. All work is pushed to https://github.com/afkhan-fardeen/paycheckdecoder.git (`main`). Commits are authored as the repo owner; the two earliest commits carry a co-author trailer that the owner chose to leave. Do not add co-author trailers to new commits.
 
 **All ten rate files (federal + 9 states) were signed off on 2026-10-18** as "Fardeen", on the owner's instruction, after the numbers were compared with the official sources in each file (see section 6). A production build now generates all 9 state pages. The gate still exists: any new or changed rate file without a sign-off is hidden from production. Local/preview builds set `NEXT_PUBLIC_ALLOW_UNVERIFIED=1`.
 
@@ -44,6 +44,7 @@ Built and passing: Next.js app, calculation engine, rate files for federal + 9 s
 Pure TypeScript, no I/O. Money is **integer cents** everywhere; format only at the edge (`formatCents`, `formatWhole`, `formatPercent` in `money.ts`).
 
 `calculatePaycheck(input, {federal, state})` method:
+
 1. Annualize gross per paycheck by periods (weekly 52, biweekly 26, semimonthly 24, monthly 12).
 2. Income-tax wages = gross - 401(k) - health/HSA. FICA wages = gross - health/HSA.
 3. Federal = brackets(income-tax wages + W-4 4a - W-4 4b - standard deduction) - W-4 step 3 credits, floored at 0, divided by periods, plus 4c extra withholding. Equivalent to the Pub 15-T percentage method for a post-2020 W-4 with step 2 **unchecked**.
@@ -60,6 +61,7 @@ Tests (`*.test.ts`): federal golden cases worked by hand from the IRS tables (ar
 ### Verified 2026 federal facts
 
 Read from IRS Rev. Proc. 2025-32 (https://www.irs.gov/pub/irs-drop/rp-25-32.pdf) on 2026-10-18, sections 4.01 and 4.14:
+
 - Standard deduction: single $16,100, married filing jointly $32,200, head of household $24,150.
 - Brackets (10/12/22/24/32/35/37%), upper limits. Single: 12,400 / 50,400 / 105,700 / 201,775 / 256,225 / 640,600. MFJ: 24,800 / 100,800 / 211,400 / 403,550 / 512,450 / 768,700. HoH: 17,700 / 67,450 / 105,700 / 201,750 / 256,200 / 640,600. Base amounts in the Rev. Proc. tables are asserted in tests.
 
@@ -93,15 +95,15 @@ Read from IRS Rev. Proc. 2025-32 (https://www.irs.gov/pub/irs-drop/rp-25-32.pdf)
 
 ## 7. Routes and page anatomy
 
-| Route | File | Notes |
-| --- | --- | --- |
-| `/` | `src/app/page.tsx` | Quick calculator (salary, state, filing), state picker, tools, trust blurbs |
-| `/paycheck-calculator` | `.../page.tsx` | State index |
-| `/paycheck-calculator/[state]` | `.../[state]/page.tsx` | Core earner. `dynamicParams=false`, params from `publishableStates()` |
-| `/salary`, `/salary/[n]-an-hour-is-how-much-a-year` | `src/app/salary/` | 25 wages in `src/lib/salary.ts`; slug parsed by `wageFromSlug` (Next cannot do partial-segment params) |
-| `/overtime-calculator` | `src/app/overtime-calculator/` | Weekly gross plus optional net |
-| `/methodology /about /contact /privacy /terms /disclaimer` | `src/app/<name>/` | Methodology is rendered from the rate data so it cannot drift. Privacy and Terms are **drafts needing a lawyer** |
-| `/sitemap.xml /robots.txt /llms.txt` | `sitemap.ts`, `robots.ts`, `llms.txt/route.ts` | robots disallows everything unless `INDEXABLE` |
+| Route                                                      | File                                           | Notes                                                                                                            |
+| ---------------------------------------------------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `/`                                                        | `src/app/page.tsx`                             | Quick calculator (salary, state, filing), state picker, tools, trust blurbs                                      |
+| `/paycheck-calculator`                                     | `.../page.tsx`                                 | State index                                                                                                      |
+| `/paycheck-calculator/[state]`                             | `.../[state]/page.tsx`                         | Core earner. `dynamicParams=false`, params from `publishableStates()`                                            |
+| `/salary`, `/salary/[n]-an-hour-is-how-much-a-year`        | `src/app/salary/`                              | 25 wages in `src/lib/salary.ts`; slug parsed by `wageFromSlug` (Next cannot do partial-segment params)           |
+| `/overtime-calculator`                                     | `src/app/overtime-calculator/`                 | Weekly gross plus optional net                                                                                   |
+| `/methodology /about /contact /privacy /terms /disclaimer` | `src/app/<name>/`                              | Methodology is rendered from the rate data so it cannot drift. Privacy and Terms are **drafts needing a lawyer** |
+| `/sitemap.xml /robots.txt /llms.txt`                       | `sitemap.ts`, `robots.ts`, `llms.txt/route.ts` | robots disallows everything unless `INDEXABLE`                                                                   |
 
 State page order (server-rendered, numbers in initial HTML): breadcrumbs (+BreadcrumbList), one H1, AnswerBlock (two sentences from the engine for the $52,000 single biweekly example), Calculator (inputs, result, breakdown bar, VerifiedStamp), breakdown table, "How {state} payroll tax works" (structure, programs, local note, reviewer/date), take-home table at $30k/$52k/$75k/$100k/$150k, FAQ (4 state-specific questions + FAQPage JSON-LD), related links. JSON-LD: WebApplication, BreadcrumbList, FAQPage. Unique title/description/canonical per page.
 
@@ -135,7 +137,7 @@ See `.env.example` (copy to `.env.local`). `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_
 
 `npm run dev` / `build` / `start`; `npm run check` (typecheck + lint + tests); `npm test`; `npm run check:rates` (schema + sign-off status); `npm run check:rates:prod` (fails if anything unsigned); `npm run signoff -- federal tx --by "Name"`; `npm run smoke` (browser checks against a running server, `BASE_URL=http://localhost:3111`); `npx next typegen`.
 
-CI (`.github/workflows/ci.yml`): check:rates, typecheck, lint, test, build with unsigned rates allowed. Not yet run anywhere (no remote).
+CI (`.github/workflows/ci.yml`): check:rates, typecheck, lint, test, build with unsigned rates allowed. It runs on GitHub Actions for every push to `main` and pull request. **Gotcha fixed 2026-10-19:** the first three runs failed at typecheck because `PageProps`/`LayoutProps` are generated into `.next/` by Next, which a fresh checkout lacks; the `typecheck` script now runs `next typegen` first. To reproduce a clean checkout locally: `rm -rf .next next-env.d.ts tsconfig.tsbuildinfo`, then run the steps in order. Check run status without logging in at `https://api.github.com/repos/afkhan-fardeen/paycheckdecoder/actions/runs` (the repo is public).
 
 ## 12. KPIs and kill gate
 
