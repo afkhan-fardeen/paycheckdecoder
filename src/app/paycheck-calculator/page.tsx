@@ -1,5 +1,7 @@
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { StatePicker } from "@/components/StatePicker";
+import { StateExplorer } from "@/components/StateExplorer";
+import { formatWhole } from "@/engine";
+import { compareStates } from "@/lib/compare";
 import { publishableStates } from "@/lib/rates";
 import { pageMetadata } from "@/lib/seo";
 import { TAX_YEAR } from "@/lib/site";
@@ -10,11 +12,14 @@ export const metadata = pageMetadata({
   path: "/paycheck-calculator",
 });
 
+const REFERENCE_SALARY = 65_000;
+
 export default function StateIndexPage() {
   const codes = publishableStates();
+  const rows = compareStates(codes, REFERENCE_SALARY, "single");
   return (
     <main className="wrap">
-      <header className="block" style={{ gap: 12 }}>
+      <header className="page-head">
         <Breadcrumbs
           items={[
             { name: "Home", href: "/" },
@@ -27,12 +32,12 @@ export default function StateIndexPage() {
           and the date its rates were last verified.
         </p>
       </header>
-      {codes.length > 0 ? (
-        <StatePicker codes={codes} />
+      {rows.length > 0 ? (
+        <StateExplorer rows={rows} salaryLabel={formatWhole(REFERENCE_SALARY * 100)} />
       ) : (
         <p className="pd-answer">State calculators open once their rates have been checked.</p>
       )}
-      <p style={{ color: "var(--ink-muted)", maxWidth: 640 }}>
+      <p className="muted-note">
         More states are added a few at a time. Each one is published only after its tax rates have been
         checked against the state&apos;s official source.
       </p>

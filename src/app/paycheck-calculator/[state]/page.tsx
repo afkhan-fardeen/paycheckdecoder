@@ -7,7 +7,12 @@ import { Calculator } from "@/components/Calculator";
 import { ContentColumns } from "@/components/ContentColumns";
 import { Faq } from "@/components/Faq";
 import { JsonLd } from "@/components/JsonLd";
+import { StateRail } from "@/components/StateRail";
+import { StatCard } from "@/components/StatCard";
+import { TakeHomeChart } from "@/components/TakeHomeChart";
+import { CalendarCheck, Landmark, PiggyBank, Wallet } from "lucide-react";
 import { formatCents, formatPercent, formatWhole } from "@/engine";
+import { compareStates, takeHomeCurve } from "@/lib/compare";
 import { examplePaycheck, EXAMPLE_SALARY } from "@/lib/example";
 import {
   getStateRates,
@@ -19,7 +24,7 @@ import {
   type StateCode,
 } from "@/lib/rates";
 import { pageMetadata } from "@/lib/seo";
-import { describeStateRules, stateAnswerNote, taxPhrase } from "@/lib/state-methods";
+import { describeStateRules, stateAnswerNote, stateTaxType, taxPhrase } from "@/lib/state-methods";
 import { TAX_YEAR, absoluteUrl, formatLongDate } from "@/lib/site";
 import { STATES, stateBySlug } from "@/lib/states";
 
@@ -102,10 +107,58 @@ export default async function StatePage({ params }: PageProps<"/paycheck-calcula
         </AnswerBlock>
       </header>
 
+      <section className="stat-grid compact" aria-label={`${info.name} at a glance`}>
+        <StatCard
+          Icon={Wallet}
+          label={`Take-home on ${formatWhole(EXAMPLE_SALARY * 100)}`}
+          value={formatWhole(example.lines.net.annual)}
+          hint={`${formatCents(example.lines.net.perPeriod)} every two weeks`}
+        />
+        <StatCard
+          Icon={PiggyBank}
+          label="Take-home rate"
+          value={formatPercent(example.takeHomeRate)}
+          hint="of gross pay, single filer"
+        />
+        <StatCard
+          Icon={Landmark}
+          label="State income tax"
+          value={stateTaxType(stateRates).label}
+          hint={stateAnswerNote(info.name, stateRates)}
+        />
+        <StatCard
+          Icon={CalendarCheck}
+          label="Rates verified"
+          value={signed && verifiedOn ? formatLongDate(verifiedOn) : "Preview"}
+          hint={`${TAX_YEAR} tax year`}
+        />
+      </section>
+
       <Calculator code={code} stateName={info.name} allowanceLabel={info.allowanceLabel} />
 
-      <ContentColumns>
-        <article className="block" style={{ gap: 12 }}>
+      <ContentColumns
+        rail={
+          <StateRail
+            code={code}
+            stateName={info.name}
+            nearby={compareStates(
+              publishableStates().filter((c) => c !== code),
+              EXAMPLE_SALARY,
+              "single",
+            ).slice(0, 5)}
+            salaryLabel={formatWhole(EXAMPLE_SALARY * 100)}
+            verifiedOn={verifiedOn}
+            signed={signed}
+            sections={[
+              { href: "#how-it-works", label: `How ${info.name} payroll tax works` },
+              { href: "#curve-h", label: "Take-home by salary" },
+              { href: "#examples", label: "Common salaries" },
+              { href: "#faq-h", label: "Frequently asked questions" },
+            ]}
+          />
+        }
+      >
+        <article className="block" id="how-it-works" style={{ gap: 12 }}>
           <h2>How {info.name} payroll tax works</h2>
           <p style={{ color: "var(--ink-muted)", maxWidth: 640 }}>{info.structure}</p>
           <h3>{info.name} withholding rules used in this calculator</h3>
@@ -132,6 +185,11 @@ export default async function StatePage({ params }: PageProps<"/paycheck-calcula
             <Link href="/methodology">Methodology and sources</Link>
           </div>
         </article>
+
+        <section className="block" aria-labelledby="curve-h" style={{ gap: 12 }}>
+          <h2 id="curve-h">How your take-home changes with salary</h2>
+          <TakeHomeChart points={takeHomeCurve(code)} stateName={info.name} initial={50_000} />
+        </section>
 
         <section className="block" aria-labelledby="examples" style={{ gap: 12 }}>
           <h2 id="examples">Take-home pay in {info.name} at common salaries</h2>

@@ -3,8 +3,10 @@ import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import Script from "next/script";
 import { PreviewBanner } from "@/components/PreviewBanner";
+import { SearchPalette } from "@/components/SearchPalette";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { buildSearchIndex } from "@/lib/search-index";
 import { ADSENSE_CLIENT, ADS_ENABLED, INDEXABLE, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -33,6 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </a>
         <PreviewBanner />
         <SiteHeader />
+        <SearchPalette items={buildSearchIndex()} />
         <div id="main" tabIndex={-1}>
           {children}
         </div>

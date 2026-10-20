@@ -135,6 +135,150 @@ try {
     await page.close();
   }
 
+  // Search, navigation, charts and filters (desktop).
+  {
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    const problems: string[] = [];
+    page.on("pageerror", (e) => problems.push(String(e)));
+    page.on("console", (m) => m.type() === "error" && problems.push(m.text()));
+    await page.goto(`${base}/`, { waitUntil: "networkidle" });
+
+    // Command palette
+    check("search: palette closed at first", !(await page.locator("dialog.palette").isVisible()));
+    await page.keyboard.press("Control+k");
+    check("search: Ctrl+K opens the palette", await page.locator("dialog.palette").isVisible());
+    check(
+      "search: input is focused",
+      await page.locator(".palette-field input").evaluate((el) => el === document.activeElement),
+    );
+    check("search: shows popular items before typing", (await page.locator(".palette-list li").count()) >= 4);
+    await page.keyboard.type("tex");
+    check(
+      "search: finds Texas",
+      (await page.locator(".palette-list li").first().innerText()).includes("Texas paycheck calculator"),
+    );
+    await page.keyboard.press("Escape");
+    check("search: Escape closes", !(await page.locator("dialog.palette").isVisible()));
+    await page.keyboard.press("/");
+    check("search: slash opens", await page.locator("dialog.palette").isVisible());
+    await page.keyboard.type("overtime");
+    await page.keyboard.press("Enter");
+    await page.waitForURL("**/overtime-calculator");
+    check("search: Enter opens the result", page.url().endsWith("/overtime-calculator"));
+    await page
+      .getByRole("button", { name: /^Search/ })
+      .first()
+      .click();
+    await page.keyboard.type("zzzzqq");
+    check(
+      "search: no-result message",
+      (await page.locator(".palette-empty").innerText()).includes("No matches"),
+    );
+    await page.keyboard.press("Escape");
+    await page.keyboard.type("25");
+    check(
+      "search: typing '25' on the page does not open search",
+      !(await page.locator("dialog.palette").isVisible()),
+    );
+
+    // Header dropdown
+    await page.goto(`${base}/`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Calculators" }).click();
+    check(
+      "menu: Calculators dropdown lists states",
+      await page
+        .locator("#calc-menu")
+        .getByRole("link", { name: /Georgia/ })
+        .isVisible(),
+    );
+    await page.keyboard.press("Escape");
+    check("menu: Escape closes dropdown", !(await page.locator("#calc-menu").isVisible()));
+    await page.getByRole("button", { name: "Calculators" }).click();
+    await page
+      .locator("#calc-menu")
+      .getByRole("link", { name: /Georgia/ })
+      .click();
+    await page.waitForURL("**/paycheck-calculator/georgia");
+    check("menu: dropdown link navigates", page.url().endsWith("/georgia"));
+
+    // Home: hero calculator, comparison chart
+    await page.goto(`${base}/`, { waitUntil: "networkidle" });
+    check(
+      "home: hero calculator shows a take-home figure",
+      /^\$\d{2},\d{3}$/.test(await page.locator(".quick .pd-result-figure").innerText()),
+    );
+    const rowsBefore = await page.locator(".cmp-row").count();
+    check("home: comparison chart has one row per state", rowsBefore === 9, String(rowsBefore));
+    const firstNet = async () => page.locator(".cmp-row").first().locator(".cmp-values b").innerText();
+    const before = await firstNet();
+    await page.getByRole("radio", { name: "$40k" }).click();
+    const after = await firstNet();
+    check("home: salary toggle updates the chart", before !== after, `${before} -> ${after}`);
+    const nets = await page.locator(".cmp-values b").allInnerTexts();
+    const nums = nets.map((t) => Number(t.replace(/[$,]/g, "")));
+    check(
+      "home: chart is sorted best first",
+      nums.every((n, i) => i === 0 || nums[i - 1] >= n),
+      nets.join(","),
+    );
+    check(
+      "home: state cards show real take-home figures",
+      (await page.locator(".state-card-figure").first().innerText()).startsWith("$"),
+    );
+    check(
+      "home: every state card links to a page that exists",
+      await (async () => {
+        const hrefs = await page
+          .locator(".state-card")
+          .evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).getAttribute("href")));
+        for (const h of hrefs) {
+          const r = await page.request.get(`${base}${h}`);
+          if (r.status() !== 200) return false;
+        }
+        return hrefs.length === 9;
+      })(),
+    );
+
+    // State page: key facts, chart slider, sidebar
+    await page.goto(`${base}/paycheck-calculator/texas`, { waitUntil: "networkidle" });
+    check("state: key facts cards", (await page.locator(".stat-grid.compact .stat-card").count()) === 4);
+    check("state: sidebar sections", (await page.locator(".rail-card").count()) >= 3);
+    const readout = async () => (await page.locator(".chart-readout").innerText()).replace(/\s+/g, " ");
+    const r1 = await readout();
+    await page.locator(".chart-slider input").fill("120000");
+    const r2 = await readout();
+    check("state: chart slider updates the readout", r1 !== r2 && r2.includes("$120,000"), r2);
+    await page.locator(".chart-data summary").click();
+    check("state: chart data table opens", await page.locator(".chart-data table").isVisible());
+    await page.locator('.rail-links a[href="#faq-h"]').click();
+    await page.waitForTimeout(600);
+    check(
+      "state: on-this-page link scrolls to the FAQ",
+      await page.locator("#faq-h").evaluate((el) => el.getBoundingClientRect().top < 300),
+    );
+
+    // States index: filter and search
+    await page.goto(`${base}/paycheck-calculator`, { waitUntil: "networkidle" });
+    check("index: shows all states", (await page.locator(".state-card").count()) === 9);
+    await page.getByRole("radio", { name: "No income tax" }).click();
+    check(
+      "index: 'No income tax' filter",
+      (await page.locator(".state-card").count()) === 5,
+      String(await page.locator(".state-card").count()),
+    );
+    await page.getByRole("radio", { name: "All" }).click();
+    await page.fill('input[type="search"]', "ohio");
+    check("index: text filter", (await page.locator(".state-card").count()) === 1);
+    await page.fill('input[type="search"]', "zzz");
+    check("index: empty state message", await page.getByText("No states match").isVisible());
+
+    // Footer
+    check("footer: link columns present", (await page.locator(".footer-grid nav").count()) === 4);
+    check("footer: trust row present", (await page.locator(".footer-trust li").count()) === 3);
+    check("desktop: no console errors across these pages", problems.length === 0, problems.join(" | "));
+    await page.close();
+  }
+
   // Phone layout: menu, touch targets, overflow at small widths, scroll to result.
   {
     const ctx = await browser.newContext({
@@ -150,7 +294,7 @@ try {
 
     check(
       "phone: inline nav hidden, menu button shown",
-      !(await page.locator(".nav-links").isVisible()) && (await page.locator(".menu-btn").isVisible()),
+      !(await page.locator(".header-nav").isVisible()) && (await page.locator(".menu-btn").isVisible()),
     );
     await page.locator(".menu-btn").click();
     check(
@@ -168,7 +312,7 @@ try {
     const small = await page.evaluate(() => {
       const bad: string[] = [];
       for (const el of document.querySelectorAll<HTMLElement>(
-        ".pd-seg button, .pd-btn, .menu-btn, .pd-control, .pd-details > summary, .chip",
+        ".pd-seg button, .pd-btn, .menu-btn, .icon-btn, .pd-control, .pd-details > summary, .chip, .state-card, .search-bar.is-hero",
       )) {
         const r = el.getBoundingClientRect();
         if (r.width > 0 && r.height < 43.5)
@@ -204,6 +348,29 @@ try {
       String(await resultTop()),
     );
 
+    await page.goto(`${base}/`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Search", exact: true }).click();
+    check("phone: search icon opens the palette", await page.locator("dialog.palette").isVisible());
+    const box = await page.locator(".palette-panel").boundingBox();
+    check(
+      "phone: palette fits the screen",
+      !!box && box.x >= 0 && box.x + box.width <= 390 && box.height <= 844,
+      JSON.stringify(box),
+    );
+    await page.keyboard.type("wash");
+    check(
+      "phone: palette search works",
+      (await page.locator(".palette-list li").first().innerText()).includes("Washington"),
+    );
+    await page.keyboard.press("Escape");
+    check(
+      "phone: hero search opens the palette",
+      await (async () => {
+        await page.locator(".search-bar.is-hero").click();
+        return page.locator("dialog.palette").isVisible();
+      })(),
+    );
+    await page.keyboard.press("Escape");
     check("phone: no console errors", problems.length === 0, problems.join(" | "));
     await ctx.close();
 

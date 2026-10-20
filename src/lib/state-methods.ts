@@ -78,3 +78,12 @@ export function taxPhrase(name: string, rates: StateRates): string {
   const programs = rates.programs.length ? `${rates.programs.map((p) => p.name).join(", ")}, ` : "";
   return `federal income tax, ${state}${programs}Social Security and Medicare`;
 }
+
+export type TaxTypeTone = "none" | "flat" | "graduated";
+
+/** Short label for cards and filters: how this state taxes wages. */
+export function stateTaxType(rates: StateRates): { label: string; tone: TaxTypeTone } {
+  if (rates.method === "none") return { label: "No income tax", tone: "none" };
+  if (rates.method === "flat") return { label: "Flat rate", tone: "flat" };
+  return { label: "Graduated", tone: "graduated" };
+}

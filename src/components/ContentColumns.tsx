@@ -2,15 +2,20 @@ import type { ReactNode } from "react";
 import { ADS_ENABLED } from "@/lib/site";
 import { AdSlot } from "./AdSlot";
 
-/** Main column plus the desktop ad rail. With ads off, the rail and its column are not rendered. */
-export function ContentColumns({ children }: { children: ReactNode }) {
+/**
+ * Main column plus an optional right rail (desktop) that stacks below on narrow screens.
+ * The rail holds `rail` content and, once ads are enabled, the ad unit. With neither, the column is not rendered.
+ */
+export function ContentColumns({ children, rail }: { children: ReactNode; rail?: ReactNode }) {
+  const hasRail = Boolean(rail) || ADS_ENABLED;
   return (
-    <div className={ADS_ENABLED ? "cols" : "cols no-rail"}>
+    <div className={hasRail ? "cols" : "cols no-rail"}>
       <div className="main">{children}</div>
-      {ADS_ENABLED ? (
-        <div className="rail">
-          <AdSlot variant="rail" />
-        </div>
+      {hasRail ? (
+        <aside className="rail" aria-label="Related information">
+          {rail}
+          {ADS_ENABLED ? <AdSlot variant="rail" /> : null}
+        </aside>
       ) : null}
     </div>
   );
