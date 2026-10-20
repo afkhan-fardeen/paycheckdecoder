@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { federalRates, getStateRates } from "@/lib/rates";
 import { breakdownSlices } from "./breakdown";
-import { calculatePaycheck, taxFromBrackets, validateInput } from "./calculate";
+import { taxFromBrackets } from "./brackets";
+import { calculatePaycheck, validateInput } from "./calculate";
 import type { PaycheckInput } from "./types";
 
 const rates = { federal: federalRates, state: getStateRates("TX") };

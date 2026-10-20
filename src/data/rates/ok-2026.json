@@ -1,0 +1,90 @@
+{
+  "jurisdiction": "OK",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "brackets",
+  "parameters": {
+    "standardDeduction": {
+      "single": 0,
+      "married": 0,
+      "head": 0
+    },
+    "allowanceAmount": 1000,
+    "roundToDollar": true,
+    "brackets": {
+      "single": [
+        {
+          "upTo": 10100,
+          "rate": 0
+        },
+        {
+          "upTo": 11250,
+          "rate": 0.025
+        },
+        {
+          "upTo": 13550,
+          "rate": 0.035
+        },
+        {
+          "upTo": null,
+          "rate": 0.045
+        }
+      ],
+      "married": [
+        {
+          "upTo": 20200,
+          "rate": 0
+        },
+        {
+          "upTo": 22500,
+          "rate": 0.025
+        },
+        {
+          "upTo": 27100,
+          "rate": 0.035
+        },
+        {
+          "upTo": null,
+          "rate": 0.045
+        }
+      ],
+      "head": [
+        {
+          "upTo": 10100,
+          "rate": 0
+        },
+        {
+          "upTo": 11250,
+          "rate": 0.025
+        },
+        {
+          "upTo": 13550,
+          "rate": 0.035
+        },
+        {
+          "upTo": null,
+          "rate": 0.045
+        }
+      ]
+    }
+  },
+  "programs": [],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "2026 Oklahoma Income Tax Withholding Tables (Packet OW-2)",
+      "url": "https://oklahoma.gov/content/dam/ok/en/tax/documents/resources/publications/businesses/withholding-tables/WHTables-2026.pdf"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official publication listed in sources on 2026-10-20. Not yet signed off.",
+    "Percentage method: annual pay less $1,000 per Form OK-W-4 allowance, then the annual rate table (the 'annual payroll period' schedule: 0% up to $10,100 single / $20,200 married, then 2.5%, 3.5%, 4.5%), divided by pay periods and rounded to the nearest dollar.",
+    "Head of household uses the single schedule (the packet gives single and married).",
+    "Official example ($1,825 semi-monthly, married, 2 allowances = $37) is asserted in tests."
+  ]
+}

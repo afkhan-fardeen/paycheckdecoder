@@ -9,6 +9,7 @@ import type { StateCode } from "@/lib/rates";
 import { Segmented } from "./Segmented";
 
 const SALARIES = [40_000, 60_000, 80_000, 100_000, 150_000];
+const INITIAL_ROWS = 10;
 const LEGEND = [
   ["net", "Take-home"],
   ["federal", "Federal income tax"],
@@ -21,6 +22,7 @@ const LEGEND = [
 export function StateComparison({ codes }: { codes: StateCode[] }) {
   const [salary, setSalary] = useState(80_000);
   const [filing, setFiling] = useState<FilingStatus>("single");
+  const [all, setAll] = useState(false);
   const rows = useMemo(() => compareStates(codes, salary, filing), [codes, salary, filing]);
   const best = rows[0];
   const worst = rows[rows.length - 1];
@@ -59,7 +61,7 @@ export function StateComparison({ codes }: { codes: StateCode[] }) {
         className="cmp-list"
         aria-label={`Take-home pay on ${formatWhole(salary * 100)} by state, highest first`}
       >
-        {rows.map((r) => (
+        {(all ? rows : rows.slice(0, INITIAL_ROWS)).map((r) => (
           <li key={r.code}>
             <Link
               className="cmp-row"
@@ -87,6 +89,11 @@ export function StateComparison({ codes }: { codes: StateCode[] }) {
           </li>
         ))}
       </ol>
+      {rows.length > INITIAL_ROWS ? (
+        <button type="button" className="pd-btn pd-btn-secondary" onClick={() => setAll((a) => !a)}>
+          {all ? "Show fewer states" : `Show all ${rows.length} states`}
+        </button>
+      ) : null}
 
       {best && worst && gap > 0 ? (
         <p className="cmp-note" role="status">

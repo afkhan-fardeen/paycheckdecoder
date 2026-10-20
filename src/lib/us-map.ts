@@ -3,19 +3,13 @@ import type { GeometryCollection, Topology } from "topojson-specification";
 import { feature, mesh } from "topojson-client";
 import atlas from "us-atlas/states-albers-10m.json";
 import type { StateCode } from "./rates";
+import { US_STATES, type UsStateCode } from "./us-states";
 
 /** US Census FIPS codes, which is how the atlas identifies each state. */
-export const STATE_FIPS: Record<StateCode, string> = {
-  TX: "48",
-  FL: "12",
-  TN: "47",
-  NV: "32",
-  WA: "53",
-  IL: "17",
-  NC: "37",
-  OH: "39",
-  GA: "13",
-};
+export const STATE_FIPS = Object.fromEntries(US_STATES.map((s) => [s.code, s.fips])) as Record<
+  UsStateCode,
+  string
+>;
 
 export interface MapState {
   code: StateCode;

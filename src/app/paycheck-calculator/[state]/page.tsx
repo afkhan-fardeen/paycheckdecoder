@@ -67,7 +67,10 @@ export default async function StatePage({ params }: PageProps<"/paycheck-calcula
   const verifiedOn = lastVerifiedOn(code);
   const signed = hasSignOff(code);
   const reviewer = getStateRates(code).verifiedBy ?? federalRates.verifiedBy;
-  const related = info.related.filter(isPublishable);
+  // The four most-searched other states, so the busiest pages get the most internal links.
+  const related = publishableStates()
+    .filter((c) => c !== code)
+    .slice(0, 4);
 
   return (
     <main className="wrap">

@@ -1,0 +1,129 @@
+{
+  "jurisdiction": "NE",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "brackets",
+  "parameters": {
+    "standardDeduction": {
+      "single": 0,
+      "married": 0,
+      "head": 0
+    },
+    "allowanceAmount": 2440,
+    "brackets": {
+      "single": [
+        {
+          "upTo": 3430,
+          "rate": 0
+        },
+        {
+          "upTo": 6710,
+          "rate": 0.0226
+        },
+        {
+          "upTo": 21810,
+          "rate": 0.0322
+        },
+        {
+          "upTo": 31610,
+          "rate": 0.0421
+        },
+        {
+          "upTo": 40130,
+          "rate": 0.0435
+        },
+        {
+          "upTo": 75370,
+          "rate": 0.0448
+        },
+        {
+          "upTo": null,
+          "rate": 0.046
+        }
+      ],
+      "married": [
+        {
+          "upTo": 8190,
+          "rate": 0
+        },
+        {
+          "upTo": 13010,
+          "rate": 0.0226
+        },
+        {
+          "upTo": 32400,
+          "rate": 0.0322
+        },
+        {
+          "upTo": 50400,
+          "rate": 0.0421
+        },
+        {
+          "upTo": 62530,
+          "rate": 0.0435
+        },
+        {
+          "upTo": 82920,
+          "rate": 0.0448
+        },
+        {
+          "upTo": null,
+          "rate": 0.046
+        }
+      ],
+      "head": [
+        {
+          "upTo": 3430,
+          "rate": 0
+        },
+        {
+          "upTo": 6710,
+          "rate": 0.0226
+        },
+        {
+          "upTo": 21810,
+          "rate": 0.0322
+        },
+        {
+          "upTo": 31610,
+          "rate": 0.0421
+        },
+        {
+          "upTo": 40130,
+          "rate": 0.0435
+        },
+        {
+          "upTo": 75370,
+          "rate": 0.0448
+        },
+        {
+          "upTo": null,
+          "rate": 0.046
+        }
+      ]
+    }
+  },
+  "programs": [],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "Nebraska 2026 Circular EN: income tax withholding percentage method tables",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/business/Cir_En_2025/2026_percent.pdf"
+    },
+    {
+      "name": "Nebraska Circular EN 2026 (complete)",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/business/Cir_En_2025/2026cir_en_whole.pdf"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official publication listed in sources on 2026-10-20. Not yet signed off.",
+    "Percentage method: subtract the allowance value (about $2,440 a year: $46.92 weekly, $93.85 biweekly, $101.67 semimonthly per allowance) from wages, then use Table 7 (annual) for single (including head of household) or married.",
+    "Annual brackets are the printed annual table (0% to $3,430 single / $8,190 married, then 2.26% to 4.60%). Checked against the weekly table: $400 weekly single withholds $10.15.",
+    "The circular gives no worked example for the percentage method; tests use values from its printed tables."
+  ]
+}

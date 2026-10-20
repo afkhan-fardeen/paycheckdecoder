@@ -1,0 +1,131 @@
+{
+  "jurisdiction": "MD",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "brackets",
+  "parameters": {
+    "standardDeduction": {
+      "single": 3400,
+      "married": 3400,
+      "head": 3400
+    },
+    "allowanceAmount": 3200,
+    "lowIncomeExemption": {
+      "single": 5000,
+      "married": 5000,
+      "head": 5000
+    },
+    "brackets": {
+      "single": [
+        {
+          "upTo": 100000,
+          "rate": 0.0475
+        },
+        {
+          "upTo": 125000,
+          "rate": 0.05
+        },
+        {
+          "upTo": 150000,
+          "rate": 0.0525
+        },
+        {
+          "upTo": 250000,
+          "rate": 0.055
+        },
+        {
+          "upTo": 500000,
+          "rate": 0.0575
+        },
+        {
+          "upTo": 1000000,
+          "rate": 0.0625
+        },
+        {
+          "upTo": null,
+          "rate": 0.065
+        }
+      ],
+      "married": [
+        {
+          "upTo": 150000,
+          "rate": 0.0475
+        },
+        {
+          "upTo": 175000,
+          "rate": 0.05
+        },
+        {
+          "upTo": 225000,
+          "rate": 0.0525
+        },
+        {
+          "upTo": 300000,
+          "rate": 0.055
+        },
+        {
+          "upTo": 600000,
+          "rate": 0.0575
+        },
+        {
+          "upTo": 1200000,
+          "rate": 0.0625
+        },
+        {
+          "upTo": null,
+          "rate": 0.065
+        }
+      ],
+      "head": [
+        {
+          "upTo": 150000,
+          "rate": 0.0475
+        },
+        {
+          "upTo": 175000,
+          "rate": 0.05
+        },
+        {
+          "upTo": 225000,
+          "rate": 0.0525
+        },
+        {
+          "upTo": 300000,
+          "rate": 0.055
+        },
+        {
+          "upTo": 600000,
+          "rate": 0.0575
+        },
+        {
+          "upTo": 1200000,
+          "rate": 0.0625
+        },
+        {
+          "upTo": null,
+          "rate": 0.065
+        }
+      ]
+    }
+  },
+  "programs": [],
+  "localTaxBase": "taxable",
+  "sources": [
+    {
+      "name": "Maryland Employer Withholding Guide 2026",
+      "url": "https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/withholding/2026/withholding-guide.pdf"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official 2026 publication listed in sources on 2026-10-20. Not yet signed off.",
+    "Guide formula: total wages, less the $3,400 standard deduction, less $3,200 per exemption on Form MW507, equals taxable income. 'Do not withhold on gross wages less than $5,000' a year.",
+    "The guide's percentage tables are printed once per county rate (2.25% to 3.30%) as state plus local. Subtracting the county rate gives the state-only schedule used here: 4.75% to 6.5%, married/head of household and single schedules separate. Checked against the 2.25%, 2.65%, 3.10% and 3.20% annual tables.",
+    "The county (local) tax is a flat rate on the same taxable income, so enter your county rate in the local rate field. Without it only state tax is shown.",
+    "The guide gives no worked example of its own; tests are hand-computed from the stated formula."
+  ]
+}

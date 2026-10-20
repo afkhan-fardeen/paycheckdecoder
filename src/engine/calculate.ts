@@ -1,10 +1,9 @@
-import type { FederalRates } from "@/lib/rates-schema";
+import { taxFromBrackets } from "./brackets";
 import { toCents } from "./money";
-import { stateIncomeTaxAnnual, stateIncomeTaxPerPeriodCents, stateProgramsAnnual } from "./state";
+import { stateProgramsAnnual, stateTax, stateTaxPerPeriodCents } from "./state";
 import {
   PERIODS_PER_YEAR,
   type Amount,
-  type FilingStatus,
   type LineKey,
   type PaycheckInput,
   type PaycheckResult,
@@ -13,22 +12,6 @@ import {
 } from "./types";
 
 const MAX_GROSS_PER_PERIOD = 10_000_000;
-
-/** Tax on annual taxable income from a bracket table, in dollars (unrounded). */
-export function taxFromBrackets(
-  taxable: number,
-  table: FederalRates["parameters"]["brackets"][FilingStatus],
-): number {
-  let tax = 0;
-  let floor = 0;
-  for (const { upTo, rate } of table) {
-    const ceiling = upTo ?? Infinity;
-    if (taxable <= floor) break;
-    tax += (Math.min(taxable, ceiling) - floor) * rate;
-    floor = ceiling;
-  }
-  return tax;
-}
 
 function nonNegative(value: number | undefined): boolean {
   return value === undefined || (Number.isFinite(value) && value >= 0);
@@ -139,16 +122,29 @@ export function calculatePaycheck(input: PaycheckInput, rates: RateSet): Paychec
   const additionalMedicare = perPeriodCents(
     Math.max(0, annualFicaWages - fp.medicare.additionalThreshold) * fp.medicare.additionalRate,
   );
-  const stateTax = stateIncomeTaxPerPeriodCents(
-    rates.state,
-    stateIncomeTaxAnnual(rates.state, annualIncomeWages, input.filingStatus, input.stateAllowances ?? 0),
-    periods,
-  );
+  const annualFica = ((socialSecurity + medicare + additionalMedicare) * periods) / 100;
+  const st = stateTax(rates.state, {
+    wages: annualIncomeWages,
+    filingStatus: input.filingStatus,
+    allowances: input.stateAllowances ?? 0,
+    annualFica,
+    annualRetirement: (k401 / 100) * periods,
+  });
+  // States that tax 401(k) deferrals (Pennsylvania) also levy local earned-income tax on them.
+  const stateAddBack =
+    (rates.state.method === "flat" || rates.state.method === "brackets") &&
+    rates.state.parameters.taxRetirementContributions
+      ? k401
+      : 0;
+  const stateIncomeTax = stateTaxPerPeriodCents(rates.state, st.tax, periods);
   const statePrograms = perPeriodCents(stateProgramsAnnual(rates.state, (gross / 100) * periods));
-  const local = Math.round((incomeWages * (input.localRatePercent ?? 0)) / 100);
+  // A county tax on the state's taxable amount (Maryland) differs from one on all wages.
+  const localBaseCents =
+    rates.state.localTaxBase === "taxable" ? (st.taxable * 100) / periods : incomeWages + stateAddBack;
+  const local = Math.round((localBaseCents * (input.localRatePercent ?? 0)) / 100);
 
   const taxes =
-    federalTax + socialSecurity + medicare + additionalMedicare + stateTax + statePrograms + local;
+    federalTax + socialSecurity + medicare + additionalMedicare + stateIncomeTax + statePrograms + local;
   const net = gross - k401 - health - taxes - postTax;
   if (net < 0) {
     throw new RangeError("Invalid paycheck input: deductions and taxes are more than gross pay.");
@@ -163,7 +159,7 @@ export function calculatePaycheck(input: PaycheckInput, rates: RateSet): Paychec
     socialSecurity: amount(socialSecurity),
     medicare: amount(medicare),
     additionalMedicare: amount(additionalMedicare),
-    state: amount(stateTax),
+    state: amount(stateIncomeTax),
     statePrograms: amount(statePrograms),
     local: amount(local),
     postTax: amount(postTax),

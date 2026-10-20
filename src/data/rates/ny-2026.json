@@ -1,0 +1,194 @@
+{
+  "jurisdiction": "NY",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "brackets",
+  "parameters": {
+    "standardDeduction": {
+      "single": 7400,
+      "married": 7950,
+      "head": 7400
+    },
+    "allowanceAmount": 1000,
+    "brackets": {
+      "single": [
+        {
+          "upTo": 8500,
+          "rate": 0.039
+        },
+        {
+          "upTo": 11700,
+          "rate": 0.044
+        },
+        {
+          "upTo": 13900,
+          "rate": 0.0515
+        },
+        {
+          "upTo": 80650,
+          "rate": 0.054
+        },
+        {
+          "upTo": 96800,
+          "rate": 0.059
+        },
+        {
+          "upTo": 107650,
+          "rate": 0.0703
+        },
+        {
+          "upTo": 157650,
+          "rate": 0.0753
+        },
+        {
+          "upTo": 215400,
+          "rate": 0.064
+        },
+        {
+          "upTo": 265400,
+          "rate": 0.1144
+        },
+        {
+          "upTo": null,
+          "rate": 0.0735
+        }
+      ],
+      "married": [
+        {
+          "upTo": 8500,
+          "rate": 0.039
+        },
+        {
+          "upTo": 11700,
+          "rate": 0.044
+        },
+        {
+          "upTo": 13900,
+          "rate": 0.0515
+        },
+        {
+          "upTo": 80650,
+          "rate": 0.054
+        },
+        {
+          "upTo": 96800,
+          "rate": 0.059
+        },
+        {
+          "upTo": 107650,
+          "rate": 0.0657
+        },
+        {
+          "upTo": 157650,
+          "rate": 0.0707
+        },
+        {
+          "upTo": 211550,
+          "rate": 0.0801
+        },
+        {
+          "upTo": 323200,
+          "rate": 0.064
+        },
+        {
+          "upTo": 373200,
+          "rate": 0.1349
+        },
+        {
+          "upTo": 1077550,
+          "rate": 0.0735
+        },
+        {
+          "upTo": null,
+          "rate": 0.0765
+        }
+      ],
+      "head": [
+        {
+          "upTo": 8500,
+          "rate": 0.039
+        },
+        {
+          "upTo": 11700,
+          "rate": 0.044
+        },
+        {
+          "upTo": 13900,
+          "rate": 0.0515
+        },
+        {
+          "upTo": 80650,
+          "rate": 0.054
+        },
+        {
+          "upTo": 96800,
+          "rate": 0.059
+        },
+        {
+          "upTo": 107650,
+          "rate": 0.0703
+        },
+        {
+          "upTo": 157650,
+          "rate": 0.0753
+        },
+        {
+          "upTo": 215400,
+          "rate": 0.064
+        },
+        {
+          "upTo": 265400,
+          "rate": 0.1144
+        },
+        {
+          "upTo": null,
+          "rate": 0.0735
+        }
+      ]
+    }
+  },
+  "programs": [
+    {
+      "key": "ny-pfl",
+      "name": "Paid Family Leave",
+      "rate": 0.00432,
+      "employeeShare": 1,
+      "wageCap": 95349.54
+    },
+    {
+      "key": "ny-sdi",
+      "name": "Disability insurance (SDI)",
+      "rate": 0.005,
+      "employeeShare": 1,
+      "wageCap": 6240
+    }
+  ],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "New York State Withholding Tax Tables and Methods, NYS-50-T-NYS (1/26)",
+      "url": "https://www.tax.ny.gov/pdf/publications/withholding/nys50_t_nys.pdf"
+    },
+    {
+      "name": "NY Paid Family Leave: updates for 2026",
+      "url": "https://paidfamilyleave.ny.gov/2026"
+    },
+    {
+      "name": "NY Workers' Compensation Board: Disability Benefits Law",
+      "url": "https://www.wcb.ny.gov/content/main/DisabilityBenefits/employee-disability-benefits.jsp"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official publication listed in sources on 2026-10-20. Not yet signed off.",
+    "Method II (exact calculation), annual form: combined deduction and exemption allowance from Table A (full year: $7,400 single, $7,950 married, plus $1,000 per exemption), then the Annual Tax Rate Schedule for single or married. Head of household uses the single schedule.",
+    "The schedule's recapture zones (rates such as 7.03% and 11.44%) are ordinary marginal rates here. Annual net wages above $1,077,550 use Method III, a flat top rate on the whole amount; this calculator extends the last bracket instead, so results for pay above about $1.1 million are not exact.",
+    "Official examples are asserted in tests to within a few cents: weekly $400 single 3 exemptions = $8.01 (period tables round their breakpoints), monthly $50,000 single 3 exemptions = $3,576.63. The schedule's printed 'add' constants are whole dollars, so cumulative marginal rates differ from them by about $4 a year (36 cents on this example).",
+    "Paid Family Leave: 0.432% of gross wages with a $411.91 annual maximum (so wages above $95,349.54 add nothing). Disability (SDI): 0.5% of wages, no more than $0.60 a week ($31.20 a year); employers may but need not collect it, and the calculator assumes they do.",
+    "NYC resident tax and the Yonkers surcharge (16.75% of the state tax) are not modelled; enter an effective city rate in the local rate field."
+  ]
+}

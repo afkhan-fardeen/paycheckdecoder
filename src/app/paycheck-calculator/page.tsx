@@ -17,7 +17,11 @@ const REFERENCE_SALARY = 65_000;
 
 export default function StateIndexPage() {
   const codes = publishableStates();
-  const rows = compareStates(codes, REFERENCE_SALARY, "single");
+  // Most searched first, so the default order matches what visitors look for.
+  const byDemand = (code: string) => codes.indexOf(code as (typeof codes)[number]);
+  const rows = compareStates(codes, REFERENCE_SALARY, "single").sort(
+    (a, b) => byDemand(a.code) - byDemand(b.code),
+  );
   return (
     <main className="wrap">
       <header className="page-head">

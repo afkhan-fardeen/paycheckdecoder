@@ -1,4 +1,6 @@
-import type { StateCode } from "./rates";
+import { STATE_CODES, getStateRates, type StateCode } from "./rates";
+import { describeStateRules } from "./state-methods";
+import { US_STATE_BY_CODE } from "./us-states";
 
 export interface StateInfo {
   code: StateCode;
@@ -13,15 +15,15 @@ export interface StateInfo {
   programs: { name: string; text: string }[];
   localNote: string;
   faqs: { q: string; a: string }[];
-  /** Codes of states linked from "Related calculators". */
-  related: StateCode[];
+  /** Unused: related states are now chosen by search demand. Kept on the handwritten states for reference. */
+  related?: StateCode[];
 }
 
 /**
  * Per-state editorial content. This text is part of what a reviewer signs off with the
  * rate files (see docs/runbook.md): a state is not published until both are checked.
  */
-export const STATES: Record<StateCode, StateInfo> = {
+const HANDWRITTEN: Partial<Record<StateCode, StateInfo>> = {
   TX: {
     code: "TX",
     slug: "texas",
@@ -378,6 +380,176 @@ export const STATES: Record<StateCode, StateInfo> = {
     related: ["NC", "OH", "IL", "TN"],
   },
 };
+
+/**
+ * What only a person can supply for a state that is built from its rate data: the employee's withholding
+ * form, the label for the allowance field, and any local-tax note. Everything with a number in it is
+ * generated from the rate file.
+ */
+interface StateSpec {
+  /** Employee withholding certificate, for example "Form DE 4". */
+  form?: string;
+  /** Label for the allowance field; omit when the state has no allowances. */
+  allowanceLabel?: string;
+  /** Replaces the default local-tax note. */
+  localNote?: string;
+  /** True when employees pay a state unemployment contribution (Alaska, New Jersey, Pennsylvania). */
+  employeePaysUnemployment?: boolean;
+}
+
+const DEFAULT_LOCAL_NOTE =
+  "This calculator does not include city or county taxes. If your locality taxes wages, enter that rate in the local rate field.";
+
+const SPECS: Partial<Record<StateCode, StateSpec>> = {
+  CA: {
+    form: "Form DE 4",
+    allowanceLabel: "Allowances on Form DE 4",
+    localNote:
+      "California cities and counties do not collect an income tax on wages from your paycheck, so there is no local rate to enter.",
+  },
+  MI: {
+    form: "Form MI-W4",
+    allowanceLabel: "Exemptions on Form MI-W4",
+    localNote:
+      "Many Michigan cities, including Detroit, charge a city income tax on wages. Enter your city rate in the local rate field to include it.",
+  },
+  CO: {
+    form: "Form DR 0004 (optional; the federal Form W-4 sets the default)",
+    localNote:
+      "Some Colorado cities charge a flat monthly occupational privilege tax. This calculator does not include it.",
+  },
+  MD: {
+    form: "Form MW507",
+    allowanceLabel: "Exemptions on Form MW507",
+    localNote:
+      "Maryland counties and Baltimore City add a local income tax that is withheld with the state tax. Enter your county's rate in the local rate field.",
+  },
+  IA: { form: "Form IA W-4", allowanceLabel: "Allowances on Form IA W-4" },
+  AR: { form: "Form AR4EC", allowanceLabel: "Exemptions on Form AR4EC" },
+  KY: {
+    form: "Form K-4",
+    localNote:
+      "Many Kentucky cities and counties charge an occupational license tax on wages. Enter your combined local rate in the local rate field.",
+  },
+  MO: {
+    form: "Form MO W-4",
+    localNote:
+      "Kansas City and St. Louis charge an earnings tax on wages. Enter that rate in the local rate field if it applies to you.",
+  },
+  ME: { form: "Form W-4ME", allowanceLabel: "Allowances on Form W-4ME" },
+  MA: { form: "Form M-4", allowanceLabel: "Exemptions on Form M-4" },
+  MN: { form: "Form W-4MN", allowanceLabel: "Allowances on Form W-4MN" },
+  AZ: { form: "Form A-4" },
+  VA: { form: "Form VA-4", allowanceLabel: "Exemptions on Form VA-4" },
+  OK: { form: "Form OK-W-4", allowanceLabel: "Allowances on Form OK-W-4" },
+  WI: { form: "Form WT-4", allowanceLabel: "Exemptions on Form WT-4" },
+  NE: { form: "Form W-4N", allowanceLabel: "Allowances on Form W-4N" },
+  ND: {},
+  NY: {
+    form: "Form IT-2104",
+    allowanceLabel: "Exemptions on Form IT-2104",
+    localNote:
+      "New York City residents pay a city income tax and Yonkers residents pay a surcharge, both withheld by employers. Enter your effective city rate in the local rate field to include it.",
+  },
+  AK: { employeePaysUnemployment: true },
+  NH: {},
+  SD: {},
+  WY: {},
+  PA: {
+    employeePaysUnemployment: true,
+    localNote:
+      "Most Pennsylvania cities, townships and school districts charge an earned income tax on wages, usually withheld by your employer. Enter your combined local rate in the local rate field.",
+  },
+};
+
+function taglineFor(code: StateCode): string {
+  const rates = getStateRates(code);
+  const base =
+    rates.method === "none"
+      ? "No state income tax"
+      : rates.method === "flat"
+        ? "Flat state income tax"
+        : "Graduated state income tax";
+  return rates.programs.length ? `${base}, plus payroll programs` : base;
+}
+
+/** Builds a state's page content from its rate file and spec, so every number in the text comes from the data. */
+function buildState(code: StateCode, spec: StateSpec): StateInfo {
+  const rates = getStateRates(code);
+  const base = US_STATE_BY_CODE[code];
+  const name = base.name;
+  const methodSentence =
+    rates.method === "none"
+      ? `${name} does not tax wages at the state level.`
+      : rates.method === "flat"
+        ? `${name} withholds one flat rate on your taxable pay, after any standard deduction and the allowances you claim.`
+        : `${name} withholds with graduated rates that rise with pay, after any standard deduction and the allowances you claim.`;
+  const employeePrograms = rates.programs.map((p) => p.name);
+  const programs: StateInfo["programs"] = [
+    ...employeePrograms.map((n) => ({
+      name: n,
+      text: "Withheld from your paycheck by your employer. The rate and wage limit are listed in the rules above and come from the state's own pages.",
+    })),
+    spec.employeePaysUnemployment
+      ? {
+          name: "Unemployment insurance",
+          text: `${name} employees also pay a state unemployment contribution. It is listed in the rules above.`,
+        }
+      : {
+          name: "Unemployment insurance",
+          text: `${name} unemployment tax is paid by employers and is not withheld from your pay.`,
+        },
+  ];
+  const rules = describeStateRules(rates);
+  const faqs: StateInfo["faqs"] = [
+    {
+      q: `How does ${name} withhold income tax from a paycheck?`,
+      a: `${rules.slice(0, 2).join(" ")} The full rules are listed on this page, with the state's source.`,
+    },
+    {
+      q: `Which form do I give my employer for ${name} withholding?`,
+      a: spec.form
+        ? `${spec.form}. ${spec.allowanceLabel ? "The allowance field in this calculator is the number you enter on that form. " : ""}If you do not file one, your employer applies the state's default.`
+        : `Most ${name} employers use the federal Form W-4 for state withholding, unless the state publishes its own certificate. Ask your payroll department which form applies to you.`,
+    },
+    employeePrograms.length
+      ? {
+          q: `Which payroll programs come out of a ${name} paycheck besides income tax?`,
+          a: `${employeePrograms.join(" and ")} ${employeePrograms.length > 1 ? "are" : "is"} withheld from your pay. The rates and wage limits are listed in the rules on this page.`,
+        }
+      : {
+          q: `Do I pay ${name} unemployment tax?`,
+          a: `No. Employers pay it. It does not appear as a deduction on your paycheck.`,
+        },
+    {
+      q: `Why might my employer's pay stub differ from this ${name} estimate?`,
+      a: "Your withholding form, benefit deductions, other jobs and your employer's payroll software can each move withholding by a few dollars per paycheck. Treat the result as an estimate.",
+    },
+  ];
+  return {
+    code,
+    slug: base.slug,
+    name,
+    tagline: taglineFor(code),
+    allowanceLabel: spec.allowanceLabel,
+    structure: `${methodSentence} Your paycheck is also reduced by federal income tax withholding, Social Security and Medicare, plus your own deductions such as a 401(k) or health insurance.`,
+    programs,
+    localNote: spec.localNote ?? DEFAULT_LOCAL_NOTE,
+    faqs,
+  };
+}
+
+/** Every published state's page content. Building fails if a rate file has neither handwritten content nor a spec. */
+export const STATES: Record<StateCode, StateInfo> = Object.fromEntries(
+  STATE_CODES.map((code) => {
+    const hand = HANDWRITTEN[code];
+    if (hand) return [code, hand];
+    const spec = SPECS[code];
+    if (!spec)
+      throw new Error(`No page content for ${code}: add it to HANDWRITTEN or SPECS in src/lib/states.ts`);
+    return [code, buildState(code, spec)];
+  }),
+) as Record<StateCode, StateInfo>;
 
 export function stateBySlug(slug: string): StateInfo | undefined {
   return Object.values(STATES).find((s) => s.slug === slug);

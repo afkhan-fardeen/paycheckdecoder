@@ -1,0 +1,91 @@
+{
+  "jurisdiction": "MA",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "brackets",
+  "parameters": {
+    "standardDeduction": {
+      "single": 0,
+      "married": 0,
+      "head": 0
+    },
+    "allowanceBase": 3400,
+    "allowanceAmount": 1000,
+    "ficaDeductionCap": 2000,
+    "statusCredit": {
+      "single": 0,
+      "married": 0,
+      "head": 120
+    },
+    "lowIncomeExemption": {
+      "single": 8000,
+      "married": 8000,
+      "head": 8000
+    },
+    "lowIncomeMinAllowances": 1,
+    "brackets": {
+      "single": [
+        {
+          "upTo": 1107750,
+          "rate": 0.05
+        },
+        {
+          "upTo": null,
+          "rate": 0.09
+        }
+      ],
+      "married": [
+        {
+          "upTo": 1107750,
+          "rate": 0.05
+        },
+        {
+          "upTo": null,
+          "rate": 0.09
+        }
+      ],
+      "head": [
+        {
+          "upTo": 1107750,
+          "rate": 0.05
+        },
+        {
+          "upTo": null,
+          "rate": 0.09
+        }
+      ]
+    }
+  },
+  "programs": [
+    {
+      "key": "ma-pfml",
+      "name": "Paid Family and Medical Leave (employee maximum)",
+      "rate": 0.0046,
+      "employeeShare": 1,
+      "wageCap": 184500
+    }
+  ],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "Massachusetts Circular M withholding tables at 5.0%, effective January 1, 2026",
+      "url": "https://www.mass.gov/doc/massachusetts-circular-m-income-tax-withholding-tables-at-50-effective-january-1-2026/download"
+    },
+    {
+      "name": "Massachusetts PFML contribution rates",
+      "url": "https://www.mass.gov/info-details/paid-family-and-medical-leave-employer-contribution-rates-and-calculator"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official 2026 publication listed in sources on 2026-10-20. Not yet signed off.",
+    "Circular M percentage method: deduct FICA withheld (up to $2,000 a year) and the exemption value ($4,400 for one exemption; $3,400 plus $1,000 each for more), annualize, tax at 5% (9% above $1,107,750, the 4% surtax), head of household credit $120 a year. No withholding when wages are under $8,000 a year for employees claiming an exemption.",
+    "A claimed spouse counts as 4 exemptions on Form M-4. Blindness credits are not modelled.",
+    "Checked against the official weekly wage-bracket table (wages $300-$310 withhold $14.08 with 0 exemptions and $9.85 with 1), asserted in tests.",
+    "PFML: 0.88% total in 2026; employers may withhold up to 40% of the medical part (0.28%) and up to all of the family part (0.18%), a maximum of 0.46% from the employee, up to the Social Security wage cap. The calculator assumes the employee pays the maximum."
+  ]
+}

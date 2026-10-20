@@ -14,17 +14,31 @@ const FILTERS: { value: "all" | TaxTypeTone; label: string }[] = [
 ];
 
 /** Searchable, filterable grid of state cards for the state index page. */
+type Sort = "popular" | "name" | "takehome";
+const SORTS: { value: Sort; label: string }[] = [
+  { value: "popular", label: "Most searched" },
+  { value: "name", label: "A to Z" },
+  { value: "takehome", label: "Take-home" },
+];
+
 export function StateExplorer({ rows, salaryLabel }: { rows: CompareRow[]; salaryLabel: string }) {
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<"all" | TaxTypeTone>("all");
+  const [sort, setSort] = useState<Sort>("popular");
   const shown = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    return rows.filter(
+    const ordered =
+      sort === "name"
+        ? [...rows].sort((a, b) => a.name.localeCompare(b.name))
+        : sort === "takehome"
+          ? [...rows].sort((a, b) => b.net - a.net)
+          : rows;
+    return ordered.filter(
       (r) =>
         (filter === "all" || r.taxTone === filter) &&
         (!needle || r.name.toLowerCase().includes(needle) || r.code.toLowerCase() === needle),
     );
-  }, [rows, q, filter]);
+  }, [rows, q, filter, sort]);
 
   return (
     <div className="explorer">
@@ -58,6 +72,19 @@ export function StateExplorer({ rows, salaryLabel }: { rows: CompareRow[]; salar
             </button>
           ))}
         </div>
+      </div>
+      <div className="pd-seg filter-seg" data-n={SORTS.length} role="radiogroup" aria-label="Sort states by">
+        {SORTS.map((o) => (
+          <button
+            key={o.value}
+            type="button"
+            role="radio"
+            aria-checked={sort === o.value}
+            onClick={() => setSort(o.value)}
+          >
+            {o.label}
+          </button>
+        ))}
       </div>
       <p className="explorer-count" role="status">
         Showing {shown.length} of {rows.length} states

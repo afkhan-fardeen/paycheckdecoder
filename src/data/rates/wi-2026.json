@@ -1,0 +1,107 @@
+{
+  "jurisdiction": "WI",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "brackets",
+  "parameters": {
+    "standardDeduction": {
+      "single": 6702,
+      "married": 9461,
+      "head": 6702
+    },
+    "allowanceAmount": 400,
+    "deductionPhaseOut": {
+      "single": {
+        "from": 17780,
+        "to": 73630
+      },
+      "married": {
+        "from": 25727,
+        "to": 73032
+      },
+      "head": {
+        "from": 17780,
+        "to": 73630
+      }
+    },
+    "brackets": {
+      "single": [
+        {
+          "upTo": 12760,
+          "rate": 0.0354
+        },
+        {
+          "upTo": 25520,
+          "rate": 0.0465
+        },
+        {
+          "upTo": 280950,
+          "rate": 0.053
+        },
+        {
+          "upTo": null,
+          "rate": 0.0765
+        }
+      ],
+      "married": [
+        {
+          "upTo": 12760,
+          "rate": 0.0354
+        },
+        {
+          "upTo": 25520,
+          "rate": 0.0465
+        },
+        {
+          "upTo": 280950,
+          "rate": 0.053
+        },
+        {
+          "upTo": null,
+          "rate": 0.0765
+        }
+      ],
+      "head": [
+        {
+          "upTo": 12760,
+          "rate": 0.0354
+        },
+        {
+          "upTo": 25520,
+          "rate": 0.0465
+        },
+        {
+          "upTo": 280950,
+          "rate": 0.053
+        },
+        {
+          "upTo": null,
+          "rate": 0.0765
+        }
+      ]
+    }
+  },
+  "programs": [],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "Wisconsin Publication W-166: Withholding Tax Guide, alternate method",
+      "url": "https://www.revenue.wi.gov/DOR%20Publications/pb166.pdf"
+    },
+    {
+      "name": "Wisconsin Withholding Tax Update, October 2025",
+      "url": "https://www.revenue.wi.gov/withholdingtaxupdate/25-1.pdf"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official publication listed in sources on 2026-10-20. Not yet signed off.",
+    "W-166 alternate method (a computer-friendly method employers may use without approval): deduction of $6,702 single / $9,461 married, phased out linearly (12% and 20% of earnings above $17,780 / $25,727), $400 per exemption, then the rate schedule (3.54% to 7.65%), divided by pay periods.",
+    "The guide states it reflects laws enacted as of January 15, 2026, and the October 2025 update says there are no plans to change withholding rates. Head of household uses the single deduction.",
+    "Official examples 1-3 (weekly $350 single 1 exemption = $7.59; weekly $500 single 3 exemptions = $14.34; biweekly $1,000 married 3 exemptions = $22.08) are asserted in tests."
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "jurisdiction": "MN",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "brackets",
+  "parameters": {
+    "standardDeduction": {
+      "single": 0,
+      "married": 0,
+      "head": 0
+    },
+    "allowanceAmount": 5300,
+    "brackets": {
+      "single": [
+        {
+          "upTo": 4700,
+          "rate": 0
+        },
+        {
+          "upTo": 38010,
+          "rate": 0.0535
+        },
+        {
+          "upTo": 114130,
+          "rate": 0.068
+        },
+        {
+          "upTo": 207850,
+          "rate": 0.0785
+        },
+        {
+          "upTo": null,
+          "rate": 0.0985
+        }
+      ],
+      "married": [
+        {
+          "upTo": 14700,
+          "rate": 0
+        },
+        {
+          "upTo": 63400,
+          "rate": 0.0535
+        },
+        {
+          "upTo": 208180,
+          "rate": 0.068
+        },
+        {
+          "upTo": 352630,
+          "rate": 0.0785
+        },
+        {
+          "upTo": null,
+          "rate": 0.0985
+        }
+      ],
+      "head": [
+        {
+          "upTo": 4700,
+          "rate": 0
+        },
+        {
+          "upTo": 38010,
+          "rate": 0.0535
+        },
+        {
+          "upTo": 114130,
+          "rate": 0.068
+        },
+        {
+          "upTo": 207850,
+          "rate": 0.0785
+        },
+        {
+          "upTo": null,
+          "rate": 0.0985
+        }
+      ]
+    }
+  },
+  "programs": [
+    {
+      "key": "mn-paid-leave",
+      "name": "Paid Leave (employee maximum)",
+      "rate": 0.0088,
+      "employeeShare": 0.5,
+      "wageCap": 185000
+    }
+  ],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "Minnesota 2026 Withholding Tax Instruction Booklet and Tax Tables",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2025-12/wh-inst-26.pdf"
+    },
+    {
+      "name": "Minnesota Paid Leave: premium rate and contributions",
+      "url": "https://pl.mn.gov/resources/calculators/premium-rate-and-contributions"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official 2026 publication listed in sources on 2026-10-20. Not yet signed off.",
+    "Computer formula (page 34): annual wages less $5,300 per W-4MN allowance; chart for single and married; divide by pay periods. The chart's first band (to $4,700 single, $14,700 married) is a 0% bracket.",
+    "Head of household uses the single chart (the booklet gives single and married).",
+    "The booklet gives no numeric worked example for the formula; tests are hand-computed from the chart.",
+    "Paid Leave: 0.88% premium in 2026; employees can be charged up to half (0.44%), on wages up to $185,000 (the state's rounded Social Security base). The calculator assumes the employee pays the maximum."
+  ]
+}

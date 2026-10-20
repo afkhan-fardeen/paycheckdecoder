@@ -1,0 +1,33 @@
+{
+  "jurisdiction": "KY",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "flat",
+  "parameters": {
+    "rate": 0.035,
+    "standardDeduction": {
+      "single": 3360,
+      "married": 3360,
+      "head": 3360
+    }
+  },
+  "programs": [],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "Kentucky 2026 Withholding Tax Formula (42A003)",
+      "url": "https://revenue.ky.gov/Forms/2026%20Withholding%20Formula.pdf"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official 2026 publication listed in sources on 2026-10-20. Not yet signed off.",
+    "Formula: annual wages less the $3,360 standard deduction, times the 3.5% flat rate, divided by pay periods.",
+    "Official monthly example ($3,270 = $104.65) is asserted in tests. The guide's bi-weekly example contains an arithmetic slip, so it is not used.",
+    "Kentucky local occupational license taxes are not included unless the visitor enters a local rate."
+  ]
+}

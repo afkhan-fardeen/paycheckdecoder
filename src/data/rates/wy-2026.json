@@ -1,0 +1,24 @@
+{
+  "jurisdiction": "WY",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "none",
+  "parameters": {},
+  "programs": [],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "Wyoming Retirement System: State Tax Withholding Change Form",
+      "url": "https://retirement.wyo.gov/wp-content/uploads/State-Tax-Withholding-Change-Form.pdf"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official source listed in sources on 2026-10-20. Not yet signed off.",
+    "The official Wyoming Retirement System form states Wyoming does not have a state income tax. The Wyoming Department of Revenue site did not surface a page saying so in search, so confirm there at sign-off."
+  ]
+}

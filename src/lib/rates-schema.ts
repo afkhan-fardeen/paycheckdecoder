@@ -89,15 +89,67 @@ const tierTable = z
     });
   });
 
-const stateCommon = { ...common, type: z.literal("state"), programs: z.array(programSchema).default([]) };
+const stateCommon = {
+  ...common,
+  type: z.literal("state"),
+  programs: z.array(programSchema).default([]),
+  /**
+   * What a visitor-entered local rate applies to: all income-tax wages (default) or the state's taxable
+   * amount after deductions (Maryland counties).
+   */
+  localTaxBase: z.enum(["wages", "taxable"]).default("wages"),
+};
+
+const money = z.number().nonnegative();
+
+/** Replaces the standard deduction and low-income threshold when a filing status claims enough allowances (California). */
+const allowanceTier = z.object({
+  status: z.enum(["single", "married", "head"]),
+  minAllowances: z.number().int().positive(),
+  standardDeduction: money,
+  lowIncomeExemption: money.optional(),
+});
+
+/** Linear phase-out of the standard deduction between two annual wage levels (Maine). */
+const phaseOut = z.object({ from: money, to: money });
+
+/**
+ * Optional rules shared by the "flat" and "brackets" methods. Every field defaults to "off", so a state
+ * file only lists what its own withholding formula uses.
+ */
+const rules = {
+  /** Annual deduction per allowance, exemption or dependent. */
+  allowanceAmount: money.default(0),
+  /** Extra deduction when at least one allowance is claimed (Massachusetts: $3,400 + $1,000 each). */
+  allowanceBase: money.default(0),
+  /** Annual tax credit per allowance (Arkansas, California, Iowa). */
+  allowanceCredit: money.default(0),
+  /** Annual tax credit by filing status (Massachusetts head of household). */
+  statusCredit: perStatus(money).default({ single: 0, married: 0, head: 0 }),
+  /** No withholding when annual wages are at or below this (California, Maryland). */
+  lowIncomeExemption: perStatus(money).default({ single: 0, married: 0, head: 0 }),
+  /** The low-income rule only applies once this many allowances are claimed (Massachusetts: 1). */
+  lowIncomeMinAllowances: z.number().int().nonnegative().default(0),
+  allowanceTiers: z.array(allowanceTier).default([]),
+  deductionPhaseOut: perStatus(phaseOut.nullable()).optional(),
+  /** Deduct FICA withheld, up to this many dollars a year (Massachusetts: $2,000). */
+  ficaDeductionCap: money.nullable().default(null),
+  /** The state taxes 401(k) deferrals, so they stay in taxable wages for withholding (Pennsylvania, New Jersey). */
+  taxRetirementContributions: z.boolean().default(false),
+  /** Round the annual tax to whole dollars before credits and division (Arkansas). */
+  roundAnnualTax: z.boolean().default(false),
+  /** Round each paycheck's withholding to the whole dollar (North Carolina, Maine, Missouri). */
+  roundToDollar: z.boolean().default(false),
+};
 
 /**
  * State income-tax withholding methods. Each new method needs an engine implementation
  * (src/engine/state.ts) and golden tests from the state's official examples before its
  * data file ships.
- *  - none:   no income tax on wages
- *  - flat:   (annual wages - standard deduction - allowances * allowanceAmount) * rate
- *  - tiered: TW = annual wages - allowances * allowanceAmount, then base + (TW - tier floor) * rate
+ *  - none:     no income tax on wages
+ *  - flat:     (annual wages - deductions) * rate, less credits
+ *  - brackets: bracket tables by filing status after deductions, less credits
+ *  - tiered:   TW = annual wages - allowances * allowanceAmount, then base + (TW - tier floor) * rate
  */
 export const stateRatesSchema = z.discriminatedUnion("method", [
   z.object({ ...stateCommon, method: z.literal("none"), parameters: z.object({}) }),
@@ -106,10 +158,17 @@ export const stateRatesSchema = z.discriminatedUnion("method", [
     method: z.literal("flat"),
     parameters: z.object({
       rate: z.number().min(0).max(1),
-      standardDeduction: perStatus(z.number().nonnegative()),
-      allowanceAmount: z.number().nonnegative(),
-      /** Round each paycheck's withholding to the whole dollar (North Carolina). */
-      roundToDollar: z.boolean(),
+      standardDeduction: perStatus(money),
+      ...rules,
+    }),
+  }),
+  z.object({
+    ...stateCommon,
+    method: z.literal("brackets"),
+    parameters: z.object({
+      standardDeduction: perStatus(money),
+      brackets: perStatus(bracketTable),
+      ...rules,
     }),
   }),
   z.object({

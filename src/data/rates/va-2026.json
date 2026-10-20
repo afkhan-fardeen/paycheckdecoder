@@ -1,0 +1,89 @@
+{
+  "jurisdiction": "VA",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "brackets",
+  "parameters": {
+    "standardDeduction": {
+      "single": 8750,
+      "married": 8750,
+      "head": 8750
+    },
+    "allowanceAmount": 930,
+    "brackets": {
+      "single": [
+        {
+          "upTo": 3000,
+          "rate": 0.02
+        },
+        {
+          "upTo": 5000,
+          "rate": 0.03
+        },
+        {
+          "upTo": 17000,
+          "rate": 0.05
+        },
+        {
+          "upTo": null,
+          "rate": 0.0575
+        }
+      ],
+      "married": [
+        {
+          "upTo": 3000,
+          "rate": 0.02
+        },
+        {
+          "upTo": 5000,
+          "rate": 0.03
+        },
+        {
+          "upTo": 17000,
+          "rate": 0.05
+        },
+        {
+          "upTo": null,
+          "rate": 0.0575
+        }
+      ],
+      "head": [
+        {
+          "upTo": 3000,
+          "rate": 0.02
+        },
+        {
+          "upTo": 5000,
+          "rate": 0.03
+        },
+        {
+          "upTo": 17000,
+          "rate": 0.05
+        },
+        {
+          "upTo": null,
+          "rate": 0.0575
+        }
+      ]
+    }
+  },
+  "programs": [],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "Virginia Employer Withholding Tables for wages paid after July 1, 2025",
+      "url": "https://www.tax.virginia.gov/sites/default/files/taxforms/withholding/any/employer-withholding-tables-july-2025-and-later-any.pdf"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official publication listed in sources on 2026-10-20. Not yet signed off.",
+    "Formula: annual pay less $8,750 less $930 per personal or dependent exemption (E1), then the bracket schedule (2%, 3%, 5%, 5.75%), divided by pay periods. The $8,750 standard deduction is scheduled to revert after taxable year 2026.",
+    "Age 65+ and blind exemptions (E2, $800 each) are not modelled. Virginia has one schedule for every filing status.",
+    "Official example ($2,649 semi-monthly, 5 exemptions = $109.50) is asserted in tests."
+  ]
+}

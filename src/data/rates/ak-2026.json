@@ -1,0 +1,37 @@
+{
+  "jurisdiction": "AK",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "none",
+  "parameters": {},
+  "programs": [
+    {
+      "key": "ak-ui",
+      "name": "Unemployment insurance (employee contribution)",
+      "rate": 0.005,
+      "employeeShare": 1,
+      "wageCap": 54200
+    }
+  ],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "Alaska Tax Facts (Office of the State Assessor)",
+      "url": "https://www.commerce.alaska.gov/web/dcra/officeofthestateassessor/alaskataxfacts.aspx"
+    },
+    {
+      "name": "Alaska 2026 Unemployment Insurance Tax Rates",
+      "url": "https://labor.alaska.gov/estax/2026-experience-rates.html"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official source listed in sources on 2026-10-20. Not yet signed off.",
+    "Alaska has no personal state income tax (Alaska Tax Facts).",
+    "Employee unemployment insurance contribution: 0.50% of wages up to the 2026 taxable wage base of $54,200 (a maximum of $271 a year), per the Alaska Department of Labor 2026 rate pages."
+  ]
+}

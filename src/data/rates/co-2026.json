@@ -1,0 +1,45 @@
+{
+  "jurisdiction": "CO",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "flat",
+  "parameters": {
+    "rate": 0.044,
+    "standardDeduction": {
+      "single": 5500,
+      "married": 11000,
+      "head": 5500
+    }
+  },
+  "programs": [
+    {
+      "key": "co-famli",
+      "name": "Paid Family and Medical Leave (FAMLI)",
+      "rate": 0.0088,
+      "employeeShare": 0.5,
+      "wageCap": 184500
+    }
+  ],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "Colorado 2026 Withholding Worksheet for Employers (DR 1098)",
+      "url": "https://tax.colorado.gov/sites/tax/files/documents/DR_1098_Colorado_Withholding_Worksheet_for_Employees.pdf"
+    },
+    {
+      "name": "Colorado FAMLI: employers",
+      "url": "https://famli.colorado.gov/employers"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official 2026 publication listed in sources on 2026-10-20. Not yet signed off.",
+    "DR 1098 (10/21/25): subtract $11,000 (married filing jointly or surviving spouse) or $5,500 (otherwise) from annual wages, multiply by 4.40%, divide by pay periods.",
+    "FAMLI: 2026 total premium 0.88% of wages up to the Social Security wage cap, split evenly (0.44% employee). Employers may choose to pay the employee share; the calculator assumes the employee pays it.",
+    "The Form DR 0004 certificate can replace the default allowance; it is not modelled. Colorado local occupational taxes are not included."
+  ]
+}

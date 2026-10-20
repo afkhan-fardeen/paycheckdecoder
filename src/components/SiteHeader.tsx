@@ -7,11 +7,13 @@ import { MobileNav } from "./MobileNav";
 import { SearchButton } from "./SearchButton";
 
 export function SiteHeader() {
-  const states = publishableStates().map((c) => ({
-    name: STATES[c].name,
-    slug: STATES[c].slug,
-    tagline: STATES[c].tagline,
-  }));
+  const states = publishableStates()
+    .slice(0, 12)
+    .map((c) => ({
+      name: STATES[c].name,
+      slug: STATES[c].slug,
+      tagline: STATES[c].tagline,
+    }));
   return (
     <header className="site-header">
       <div className="container header-in">

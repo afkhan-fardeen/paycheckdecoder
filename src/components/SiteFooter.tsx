@@ -53,7 +53,7 @@ export function SiteFooter() {
           <nav aria-label="Calculators">
             <h2>Calculators</h2>
             <ul>
-              {codes.map((c) => (
+              {codes.slice(0, 8).map((c) => (
                 <li key={c}>
                   <Link href={`/paycheck-calculator/${STATES[c].slug}`}>{STATES[c].name}</Link>
                 </li>

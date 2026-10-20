@@ -1,0 +1,24 @@
+{
+  "jurisdiction": "NH",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "none",
+  "parameters": {},
+  "programs": [],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "New Hampshire Department of Revenue Administration: Interest & Dividends Tax",
+      "url": "https://www.revenue.nh.gov/taxes-glance/interest-dividends-tax"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official source listed in sources on 2026-10-20. Not yet signed off.",
+    "The department states New Hampshire has no income tax on an individual's reported W-2 wages. The interest and dividends tax was repealed for periods beginning on or after January 1, 2025."
+  ]
+}

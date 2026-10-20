@@ -3,27 +3,72 @@ import type { StateRates } from "./rates-schema";
 const usd = (n: number) => `$${n.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
 const pct = (ratio: number) => `${Number((ratio * 100).toFixed(3))}%`;
 
+type Rules = Extract<StateRates, { method: "flat" | "brackets" }>["parameters"];
+const STATUS = { single: "single", married: "married", head: "head of household" } as const;
+
+/** One line per filing status, or a single line when they are all equal. */
+function perStatusLine(label: string, v: { single: number; married: number; head: number }): string | null {
+  if (!v.single && !v.married && !v.head) return null;
+  if (v.single === v.married && v.single === v.head) return `${label}: ${usd(v.single)} a year.`;
+  return `${label}: ${usd(v.single)} single, ${usd(v.married)} married, ${usd(v.head)} head of household.`;
+}
+
+function ruleLines(p: Rules): string[] {
+  const lines: string[] = [];
+  const std = perStatusLine("Standard deduction", p.standardDeduction);
+  lines.push(std ?? "There is no standard deduction in the withholding calculation.");
+  for (const t of p.allowanceTiers) {
+    lines.push(
+      `${t.status === "married" ? "Married" : STATUS[t.status]} filers claiming ${t.minAllowances} or more allowances use a ${usd(t.standardDeduction)} standard deduction.`,
+    );
+  }
+  if (p.deductionPhaseOut && Object.values(p.deductionPhaseOut).some(Boolean)) {
+    lines.push(
+      "The standard deduction phases out for higher wages and reaches zero at the top of the range.",
+    );
+  }
+  if (p.allowanceAmount || p.allowanceBase) {
+    lines.push(
+      p.allowanceBase
+        ? `Claiming allowances lowers taxable pay by ${usd(p.allowanceBase)} plus ${usd(p.allowanceAmount)} for each one.`
+        : `Each allowance lowers taxable pay by ${usd(p.allowanceAmount)} a year.`,
+    );
+  }
+  if (p.allowanceCredit) lines.push(`Each allowance takes ${usd(p.allowanceCredit)} a year off the tax.`);
+  const credit = perStatusLine("Annual credit", p.statusCredit);
+  if (credit) lines.push(credit);
+  if (p.ficaDeductionCap !== null) {
+    lines.push(
+      `Social Security and Medicare withheld are deducted, up to ${usd(p.ficaDeductionCap)} a year.`,
+    );
+  }
+  const low = perStatusLine("No tax is withheld when annual wages are at or below", p.lowIncomeExemption);
+  if (low) lines.push(low);
+  if (p.roundAnnualTax)
+    lines.push("The annual tax is rounded to the whole dollar before it is divided across paychecks.");
+  if (p.roundToDollar) lines.push("Each paycheck's withholding is rounded to the whole dollar.");
+  return lines;
+}
+
 /** Plain-language rules for a state, generated from its rate file so page text can never drift from the numbers. */
 export function describeStateRules(rates: StateRates): string[] {
   const lines: string[] = [];
   if (rates.method === "none") {
     lines.push("No state income tax is withheld from wages.");
   } else if (rates.method === "flat") {
-    const p = rates.parameters;
-    lines.push(`Withholding rate: ${pct(p.rate)} of taxable pay.`);
-    const d = p.standardDeduction;
-    if (d.single || d.married || d.head) {
-      lines.push(
-        d.single === d.married && d.single === d.head
-          ? `Standard deduction: ${usd(d.single)} a year.`
-          : `Standard deduction a year: ${usd(d.single)} single, ${usd(d.married)} married, ${usd(d.head)} head of household.`,
-      );
-    } else {
-      lines.push("There is no standard deduction in the withholding calculation.");
-    }
-    if (p.allowanceAmount)
-      lines.push(`Each allowance reduces taxable pay by ${usd(p.allowanceAmount)} a year.`);
-    if (p.roundToDollar) lines.push("Each paycheck's withholding is rounded to the whole dollar.");
+    lines.push(
+      `Withholding rate: ${pct(rates.parameters.rate)} of taxable pay.`,
+      ...ruleLines(rates.parameters),
+    );
+  } else if (rates.method === "brackets") {
+    const rateList = Object.values(rates.parameters.brackets).flatMap((t) => t.map((r) => r.rate));
+    const lo = Math.min(...rateList);
+    const hi = Math.max(...rateList);
+    const count = rates.parameters.brackets.single.length;
+    lines.push(
+      `Graduated rates from ${pct(lo)} to ${pct(hi)} across ${count} brackets, with separate tables by filing status.`,
+      ...ruleLines(rates.parameters),
+    );
   } else {
     const p = rates.parameters;
     let floor = 0;
@@ -37,6 +82,11 @@ export function describeStateRules(rates: StateRates): string[] {
     }
     if (p.allowanceAmount)
       lines.push(`Each exemption reduces taxable pay by ${usd(p.allowanceAmount)} a year.`);
+  }
+  if (rates.localTaxBase === "taxable") {
+    lines.push(
+      "A local (county) rate, if you enter one, is applied to the same taxable pay as the state tax.",
+    );
   }
   for (const program of rates.programs) {
     const mine = program.rate * program.employeeShare;
@@ -59,16 +109,20 @@ export function stateAnswerNote(name: string, rates: StateRates): string {
       ? `${name} has no state income tax, but ${programs} premiums come out of your pay.`
       : `${name} has no state income tax.`;
   }
-  if (rates.method === "flat") {
-    return `${name} withholds a flat ${pct(rates.parameters.rate)} of taxable pay.`;
-  }
-  return `${name} uses a graduated withholding formula.`;
+  const base =
+    rates.method === "flat"
+      ? `${name} withholds a flat ${pct(rates.parameters.rate)} of taxable pay.`
+      : rates.method === "brackets"
+        ? `${name} uses graduated withholding rates.`
+        : `${name} uses a graduated withholding formula.`;
+  return programs ? `${base} ${programs} premiums also come out of your pay.` : base;
 }
 
 /** Short note under the state line in the breakdown table. */
 export function stateTableNote(name: string, rates: StateRates): string {
   if (rates.method === "none") return `${name} has no state income tax`;
   if (rates.method === "flat") return `Flat ${pct(rates.parameters.rate)} after deductions and allowances`;
+  if (rates.method === "brackets") return "Graduated rates after deductions and allowances";
   return "Graduated withholding formula";
 }
 

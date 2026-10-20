@@ -7,6 +7,9 @@ import { chromium } from "playwright-core";
 
 const base = process.env.BASE_URL ?? "http://localhost:3000";
 const chrome = process.env.CHROME_PATH ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const published = (
+  (await (await fetch(`${base}/sitemap.xml`)).text()).match(/\/paycheck-calculator\/[a-z-]+</g) ?? []
+).length;
 
 let failures = 0;
 function check(name: string, ok: boolean, detail = "") {
@@ -208,7 +211,19 @@ try {
       /^\$\d{2},\d{3}$/.test(await page.locator(".quick .pd-result-figure").innerText()),
     );
     const rowsBefore = await page.locator(".cmp-row").count();
-    check("home: comparison chart has one row per state", rowsBefore === 9, String(rowsBefore));
+    check("sitemap: at least the original nine states", published >= 9, String(published));
+    check(
+      "home: comparison chart starts with the top rows",
+      rowsBefore === Math.min(10, published),
+      String(rowsBefore),
+    );
+    if (published > 10) {
+      await page
+        .locator(".cmp")
+        .getByRole("button", { name: /Show all/ })
+        .click();
+      check("home: chart expands to every state", (await page.locator(".cmp-row").count()) === published);
+    }
     const firstNet = async () => page.locator(".cmp-row").first().locator(".cmp-values b").innerText();
     const before = await firstNet();
     await page.locator(".cmp").getByRole("radio", { name: "$40k" }).click();
@@ -235,7 +250,7 @@ try {
           const r = await page.request.get(`${base}${h}`);
           if (r.status() !== 200) return false;
         }
-        return hrefs.length === 9;
+        return hrefs.length === Math.min(12, published);
       })(),
     );
 
@@ -259,11 +274,11 @@ try {
 
     // States index: filter and search
     await page.goto(`${base}/paycheck-calculator`, { waitUntil: "networkidle" });
-    check("index: shows all states", (await page.locator(".state-card").count()) === 9);
+    check("index: shows all states", (await page.locator(".state-card").count()) === published);
     await page.getByRole("radio", { name: "No income tax" }).click();
     check(
       "index: 'No income tax' filter",
-      (await page.locator(".state-card").count()) === 5,
+      (await page.locator(".state-card").count()) >= 5,
       String(await page.locator(".state-card").count()),
     );
     await page.getByRole("radio", { name: "All" }).click();
@@ -287,10 +302,13 @@ try {
     page.on("console", (m) => m.type() === "error" && problems.push(m.text()));
     await page.goto(`${base}/`, { waitUntil: "networkidle" });
 
-    check("map: one link per published state", (await page.locator("a.map-state").count()) === 9);
+    const mapLinks = await page.locator("a.map-state").count();
+    check("map: one link per published state", mapLinks === published, String(mapLinks));
     check(
       "map: is exposed as a labelled group",
-      (await page.locator('svg.map-svg[role="group"]').getAttribute("aria-label"))!.includes("9 states"),
+      (await page.locator('svg.map-svg[role="group"]').getAttribute("aria-label"))!.includes(
+        `${published} states`,
+      ),
     );
     check(
       "map: unavailable states are not links",
@@ -358,8 +376,27 @@ try {
     await page.waitForURL("**/paycheck-calculator/georgia");
     check("map: Enter on a focused state opens it", page.url().endsWith("/georgia"));
 
+    // Tile view and the state menu
+    await page.goto(`${base}/`, { waitUntil: "networkidle" });
+    await page.locator(".map-view-toggle").getByRole("radio", { name: "Tiles" }).click();
+    check("tiles: one cell per state", (await page.locator(".tile-grid li").count()) === 50);
+    check("tiles: published states are links", (await page.locator("a.tile").count()) === published);
+    check(
+      "tiles: tiles are at least 44px",
+      await page
+        .locator("a.tile")
+        .first()
+        .evaluate((el) => el.getBoundingClientRect().height >= 44),
+    );
+    await page.locator("#map-jump").selectOption({ label: "Georgia" });
+    check(
+      "map: state menu previews the chosen state",
+      (await page.locator(".map-panel h3").innerText()) === "Georgia",
+    );
+    await page.locator(".map-view-toggle").getByRole("radio", { name: "Map" }).click();
+
     await page.goto(`${base}/paycheck-calculator`, { waitUntil: "networkidle" });
-    check("map: also on the states index", (await page.locator("a.map-state").count()) === 9);
+    check("map: also on the states index", (await page.locator("a.map-state").count()) === published);
     for (const path of [
       "/",
       "/paycheck-calculator",

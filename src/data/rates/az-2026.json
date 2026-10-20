@@ -1,0 +1,36 @@
+{
+  "jurisdiction": "AZ",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "flat",
+  "parameters": {
+    "rate": 0.02,
+    "standardDeduction": {
+      "single": 0,
+      "married": 0,
+      "head": 0
+    }
+  },
+  "programs": [],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "Arizona Form A-4 (2026)",
+      "url": "https://azdor.gov/sites/default/files/document/FORMS_WITHHOLDING_2026_A-4_f.pdf"
+    },
+    {
+      "name": "Arizona Department of Revenue: withholding",
+      "url": "https://azdor.gov/business/withholding-tax"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official 2026 publication listed in sources on 2026-10-20. Not yet signed off.",
+    "Arizona withholding is a percentage of gross taxable wages that the employee chooses on Form A-4 (0.5% to 3.5% in half-point steps). The default when no form is on file is 2.0%, used here.",
+    "Arizona's agency site blocks automated downloads, so this was read from the 2026 A-4 and its employer instructions as quoted in search results, not from the PDF itself: confirm against the A-4 at sign-off."
+  ]
+}

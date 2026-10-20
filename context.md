@@ -178,3 +178,12 @@ Engineering backlog: weekly rate-source monitor and PR bot; weekly summary (unin
 - Money in cents; engine stays pure and framework-free; rates are passed in, never imported by the engine.
 - Match the design system and copy rules above; update this file when a decision or number changes.
 - Do not commit, push, deploy, buy a domain or sign off rate files without Fardeen asking.
+
+## 16. 50-state expansion (2026-10-20, uncommitted, all new states unsigned)
+
+- 32 states have rate files: the 9 signed originals plus 23 new ones (AK AR AZ CA CO IA KY MA MD ME MI MN MO ND NE NH NY OK PA SD VA WI WY), all `verifiedBy: null`, so production hides them until signed. Register a new file with `npm run gen:rates` (rebuilds `src/data/rates/index.ts`), add a `SPECS` entry in `src/lib/states.ts`, and add official-example tests in `src/engine/states-batch1.test.ts`.
+- Engine rules added (declarative, in the rate file `parameters`): brackets method, allowance tiers, low-income exemption, phase-outs, allowance credits, FICA deduction cap, retirement add-back, annual rounding, `localTaxBase`.
+- Still to research from official sources: AL CT DE HI KS LA MS MT NJ NM OR RI VT WV. Excluded for now: ID, IN, UT (agency sites unreachable), SC (2026 tables pending). Oregon needs a federal-tax subtraction rule in the engine.
+- Search demand per state: `src/data/search-demand.json` (Ahrefs, 2026-10-20). `STATE_CODES` and cards are ordered by it.
+- Map: `StatesMap` has a Map/Tiles toggle (`src/lib/us-tiles.ts`, 11x8 grid; toggle hidden at <=640px) and a "Jump to a state" select. Home shows the 12 most searched states and a chart of 10 rows with "Show all"; the header menu lists 12, the footer 8; the state index has a sort (most searched, A to Z, take-home).
+- Smoke test derives the expected state count from `/sitemap.xml`, so it no longer hard-codes 9.

@@ -1,0 +1,137 @@
+{
+  "jurisdiction": "MO",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "brackets",
+  "parameters": {
+    "standardDeduction": {
+      "single": 16100,
+      "married": 32200,
+      "head": 24150
+    },
+    "roundToDollar": true,
+    "brackets": {
+      "single": [
+        {
+          "upTo": 1348,
+          "rate": 0
+        },
+        {
+          "upTo": 2696,
+          "rate": 0.02
+        },
+        {
+          "upTo": 4044,
+          "rate": 0.025
+        },
+        {
+          "upTo": 5392,
+          "rate": 0.03
+        },
+        {
+          "upTo": 6740,
+          "rate": 0.035
+        },
+        {
+          "upTo": 8088,
+          "rate": 0.04
+        },
+        {
+          "upTo": 9436,
+          "rate": 0.045
+        },
+        {
+          "upTo": null,
+          "rate": 0.047
+        }
+      ],
+      "married": [
+        {
+          "upTo": 1348,
+          "rate": 0
+        },
+        {
+          "upTo": 2696,
+          "rate": 0.02
+        },
+        {
+          "upTo": 4044,
+          "rate": 0.025
+        },
+        {
+          "upTo": 5392,
+          "rate": 0.03
+        },
+        {
+          "upTo": 6740,
+          "rate": 0.035
+        },
+        {
+          "upTo": 8088,
+          "rate": 0.04
+        },
+        {
+          "upTo": 9436,
+          "rate": 0.045
+        },
+        {
+          "upTo": null,
+          "rate": 0.047
+        }
+      ],
+      "head": [
+        {
+          "upTo": 1348,
+          "rate": 0
+        },
+        {
+          "upTo": 2696,
+          "rate": 0.02
+        },
+        {
+          "upTo": 4044,
+          "rate": 0.025
+        },
+        {
+          "upTo": 5392,
+          "rate": 0.03
+        },
+        {
+          "upTo": 6740,
+          "rate": 0.035
+        },
+        {
+          "upTo": 8088,
+          "rate": 0.04
+        },
+        {
+          "upTo": 9436,
+          "rate": 0.045
+        },
+        {
+          "upTo": null,
+          "rate": 0.047
+        }
+      ]
+    }
+  },
+  "programs": [],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "2026 Missouri Withholding Tax Formula",
+      "url": "https://dor.mo.gov/forms/Withholding%20Formula_2026.pdf"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official 2026 publication listed in sources on 2026-10-20. Not yet signed off.",
+    "Formula: annual wages less the standard deduction ($16,100 single or married with a working spouse, $24,150 head of household, $32,200 married with a non-working spouse); tax from the annual rate table (0% to 4.7%); divided by pay periods; rounded to the whole dollar.",
+    "'Married' in the calculator means married with a spouse who does not work. Married filers with a working spouse should choose single.",
+    "The formula gives no worked example result; tests are hand-computed from the rate table. Kansas City and St. Louis earnings taxes are not included unless the visitor enters a local rate."
+  ]
+}

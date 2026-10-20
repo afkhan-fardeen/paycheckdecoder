@@ -1,35 +1,31 @@
+import demand from "@/data/search-demand.json";
 import federalJson from "@/data/rates/federal-2026.json";
-import flJson from "@/data/rates/fl-2026.json";
-import nvJson from "@/data/rates/nv-2026.json";
-import tnJson from "@/data/rates/tn-2026.json";
-import txJson from "@/data/rates/tx-2026.json";
-import gaJson from "@/data/rates/ga-2026.json";
-import ilJson from "@/data/rates/il-2026.json";
-import ncJson from "@/data/rates/nc-2026.json";
-import ohJson from "@/data/rates/oh-2026.json";
-import waJson from "@/data/rates/wa-2026.json";
+import { stateRateFiles } from "@/data/rates";
 import { federalRatesSchema, stateRatesSchema, type RateFile, type StateRates } from "./rates-schema";
 
 /** Parsed at import time, so malformed rate files fail the build instead of reaching a page. */
 export const federalRates = federalRatesSchema.parse(federalJson);
 
-const stateFiles = {
-  TX: stateRatesSchema.parse(txJson),
-  FL: stateRatesSchema.parse(flJson),
-  TN: stateRatesSchema.parse(tnJson),
-  NV: stateRatesSchema.parse(nvJson),
-  WA: stateRatesSchema.parse(waJson),
-  IL: stateRatesSchema.parse(ilJson),
-  NC: stateRatesSchema.parse(ncJson),
-  OH: stateRatesSchema.parse(ohJson),
-  GA: stateRatesSchema.parse(gaJson),
-} as const;
+export type StateCode = keyof typeof stateRateFiles;
 
-export type StateCode = keyof typeof stateFiles;
-export const STATE_CODES = Object.keys(stateFiles) as StateCode[];
+const volume = demand.volume as Record<string, number>;
+
+/** Every state with a rate file, most searched first (Ahrefs "X paycheck calculator" volume), then A to Z. */
+export const STATE_CODES = (Object.keys(stateRateFiles) as StateCode[]).sort(
+  (a, b) => (volume[b] ?? 0) - (volume[a] ?? 0) || a.localeCompare(b),
+);
+
+const stateFiles = Object.fromEntries(
+  STATE_CODES.map((code) => [code, stateRatesSchema.parse(stateRateFiles[code])]),
+) as Record<StateCode, StateRates>;
 
 export function getStateRates(code: StateCode): StateRates {
   return stateFiles[code];
+}
+
+/** Monthly US searches for "<state> paycheck calculator", from src/data/search-demand.json. */
+export function searchVolume(code: StateCode): number {
+  return volume[code] ?? 0;
 }
 
 export function isVerified(file: RateFile): boolean {

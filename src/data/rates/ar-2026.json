@@ -1,0 +1,126 @@
+{
+  "jurisdiction": "AR",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "brackets",
+  "parameters": {
+    "standardDeduction": {
+      "single": 2470,
+      "married": 2470,
+      "head": 2470
+    },
+    "allowanceCredit": 29,
+    "roundAnnualTax": true,
+    "brackets": {
+      "single": [
+        {
+          "upTo": 5600,
+          "rate": 0
+        },
+        {
+          "upTo": 11200,
+          "rate": 0.02
+        },
+        {
+          "upTo": 16000,
+          "rate": 0.03
+        },
+        {
+          "upTo": 26400,
+          "rate": 0.034
+        },
+        {
+          "upTo": 94700,
+          "rate": 0.037
+        },
+        {
+          "upTo": 97600,
+          "rate": 0.137
+        },
+        {
+          "upTo": null,
+          "rate": 0.037
+        }
+      ],
+      "married": [
+        {
+          "upTo": 5600,
+          "rate": 0
+        },
+        {
+          "upTo": 11200,
+          "rate": 0.02
+        },
+        {
+          "upTo": 16000,
+          "rate": 0.03
+        },
+        {
+          "upTo": 26400,
+          "rate": 0.034
+        },
+        {
+          "upTo": 94700,
+          "rate": 0.037
+        },
+        {
+          "upTo": 97600,
+          "rate": 0.137
+        },
+        {
+          "upTo": null,
+          "rate": 0.037
+        }
+      ],
+      "head": [
+        {
+          "upTo": 5600,
+          "rate": 0
+        },
+        {
+          "upTo": 11200,
+          "rate": 0.02
+        },
+        {
+          "upTo": 16000,
+          "rate": 0.03
+        },
+        {
+          "upTo": 26400,
+          "rate": 0.034
+        },
+        {
+          "upTo": 94700,
+          "rate": 0.037
+        },
+        {
+          "upTo": 97600,
+          "rate": 0.137
+        },
+        {
+          "upTo": null,
+          "rate": 0.037
+        }
+      ]
+    }
+  },
+  "programs": [],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "Arkansas Withholding Tax Formula Method, effective 01/01/2026",
+      "url": "https://www.dfa.arkansas.gov/wp-content/uploads/Withholding-Tax-Formula.pdf"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official 2026 publication listed in sources on 2026-10-20. Not yet signed off.",
+    "Formula: annual pay less a $2,470 standard deduction; tax from the bracket table (annual gross tax rounded to the dollar); less $29 per exemption on Form AR4EC; divided by pay periods.",
+    "The official table is written as 'rate x income minus an adjustment' with $50 mid-range lookups. It is represented here as continuous brackets; the zone between $94,700 and $97,600 (where the table recaptures the lower brackets) is a 13.7% bracket, which matches the table to within about $3 a year.",
+    "Official worked example ($2,127 monthly, 2 exemptions = $36.50) is asserted in tests."
+  ]
+}

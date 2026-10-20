@@ -1,0 +1,92 @@
+{
+  "jurisdiction": "ME",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "brackets",
+  "parameters": {
+    "standardDeduction": {
+      "single": 12850,
+      "married": 28550,
+      "head": 12850
+    },
+    "allowanceAmount": 5300,
+    "roundToDollar": true,
+    "deductionPhaseOut": {
+      "single": {
+        "from": 102250,
+        "to": 177250
+      },
+      "married": {
+        "from": 204550,
+        "to": 354550
+      },
+      "head": {
+        "from": 102250,
+        "to": 177250
+      }
+    },
+    "brackets": {
+      "single": [
+        {
+          "upTo": 27400,
+          "rate": 0.058
+        },
+        {
+          "upTo": 64850,
+          "rate": 0.0675
+        },
+        {
+          "upTo": null,
+          "rate": 0.0715
+        }
+      ],
+      "married": [
+        {
+          "upTo": 54850,
+          "rate": 0.058
+        },
+        {
+          "upTo": 129750,
+          "rate": 0.0675
+        },
+        {
+          "upTo": null,
+          "rate": 0.0715
+        }
+      ],
+      "head": [
+        {
+          "upTo": 27400,
+          "rate": 0.058
+        },
+        {
+          "upTo": 64850,
+          "rate": 0.0675
+        },
+        {
+          "upTo": null,
+          "rate": 0.0715
+        }
+      ]
+    }
+  },
+  "programs": [],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "Maine Revenue Services 2026 Withholding Tables (revised August 2026)",
+      "url": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/26_wh_tab_instr_August2026.pdf"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official 2026 publication listed in sources on 2026-10-20. Not yet signed off.",
+    "Percentage method steps 1-6: annualize; $5,300 per W-4ME allowance; standard deduction for withholding $12,850 single or $28,550 married, phased out linearly between $102,250 and $177,250 (single) or $204,550 and $354,550 (married); rate schedule; divide and round to the dollar.",
+    "Head of household uses the single schedule and deduction (the booklet gives only single and married).",
+    "Official examples 1-3 (weekly $300 single = $0, $1,000 single = $32, $4,500 married = $256) are asserted in tests. The August 2026 booklet's income tax surcharge note is not modelled."
+  ]
+}

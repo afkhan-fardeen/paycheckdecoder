@@ -1,0 +1,24 @@
+{
+  "jurisdiction": "SD",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "none",
+  "parameters": {},
+  "programs": [],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "South Dakota Department of Revenue: individual taxes",
+      "url": "https://dor.sd.gov/individuals/taxes/"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official source listed in sources on 2026-10-20. Not yet signed off.",
+    "The department states South Dakota is one of seven states with no state income tax."
+  ]
+}

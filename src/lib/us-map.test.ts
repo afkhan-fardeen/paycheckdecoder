@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { STATE_CODES } from "./rates";
 import { STATES } from "./states";
 import { buildUsMap, STATE_FIPS } from "./us-map";
+import { US_STATES } from "./us-states";
 
 describe("buildUsMap", () => {
   const map = buildUsMap(STATE_CODES);
@@ -35,8 +36,10 @@ describe("buildUsMap", () => {
     expect(total).toBeLessThan(100_000);
   });
 
-  it("has a FIPS entry for every state we publish", () => {
-    expect(Object.keys(STATE_FIPS).sort()).toEqual([...STATE_CODES].sort());
+  it("has a FIPS entry for every state we publish, and 50 distinct states overall", () => {
+    for (const code of STATE_CODES) expect(STATE_FIPS[code]).toMatch(/^\d{2}$/);
+    expect(new Set(US_STATES.map((s) => s.fips)).size).toBe(50);
+    expect(new Set(US_STATES.map((s) => s.slug)).size).toBe(50);
   });
 
   it("an unavailable state is not drawn as interactive", () => {

@@ -1,0 +1,51 @@
+{
+  "jurisdiction": "PA",
+  "taxYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "type": "state",
+  "method": "flat",
+  "parameters": {
+    "rate": 0.0307,
+    "standardDeduction": {
+      "single": 0,
+      "married": 0,
+      "head": 0
+    },
+    "taxRetirementContributions": true
+  },
+  "programs": [
+    {
+      "key": "pa-ui",
+      "name": "Unemployment insurance (employee contribution)",
+      "rate": 0.0007,
+      "employeeShare": 1,
+      "wageCap": null
+    }
+  ],
+  "localTaxBase": "wages",
+  "sources": [
+    {
+      "name": "Pennsylvania Department of Revenue: employer withholding",
+      "url": "https://www.pa.gov/agencies/revenue/resources/tax-types-and-information/employer-withholding"
+    },
+    {
+      "name": "Pennsylvania personal income tax guide: income subject to withholding",
+      "url": "https://www.pa.gov/agencies/revenue/forms-and-publications/pa-personal-income-tax-guide/income-subject-withholding-estimated-payments-penalties-interest-other-additions"
+    },
+    {
+      "name": "Pennsylvania L&I: yearly UC tax highlights",
+      "url": "https://www.pa.gov/agencies/dli/resources/for-employers-and-educators/how-to-file/uc-tax/yearly-tax-highlights"
+    }
+  ],
+  "retrievedOn": "2026-10-20",
+  "verifiedBy": null,
+  "verifiedOn": null,
+  "notes": [
+    "Read from the official source listed in sources on 2026-10-20. Not yet signed off.",
+    "Employers withhold a flat 3.07% of compensation. There is no standard deduction, exemption or allowance in Pennsylvania withholding.",
+    "Employee 401(k) deferrals are added back to federal wages for Pennsylvania (PIT guide appendix, Part A item 6), so they do not reduce state withholding. Section 125 health premiums are excluded.",
+    "Employee unemployment contribution: 0.07% of gross wages for 2026, with no wage cap (PA Department of Labor and Industry).",
+    "Most Pennsylvania localities levy an earned income tax; enter your rate in the local rate field."
+  ]
+}

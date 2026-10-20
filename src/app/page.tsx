@@ -40,6 +40,8 @@ export const metadata = pageMetadata({
 });
 
 const CARD_SALARY = 65_000;
+/** Cards on the home page; the full list lives on /paycheck-calculator. */
+const FEATURED_STATES = 12;
 const WAGES = [15, 20, 25, 30, 35, 40];
 
 const FAQS = [
@@ -64,7 +66,7 @@ const FAQS = [
 export default function HomePage() {
   const codes = publishableStates();
   const states = codes.map((c) => ({ code: c, name: STATES[c].name, slug: STATES[c].slug }));
-  const rows = compareStates(codes, CARD_SALARY, "single");
+  const rows = compareStates(codes.slice(0, FEATURED_STATES), CARD_SALARY, "single");
   const verified = codes
     .map((c) => lastVerifiedOn(c))
     .filter((d): d is string => Boolean(d))
@@ -164,7 +166,7 @@ export default function HomePage() {
               eyebrow="Explore"
               id="map-h"
               title="Pick your state on the map"
-              description="Colored states have a calculator. Hover to preview what you keep, then click to open it. The rest are coming soon."
+              description="Colored states have a calculator. Hover to preview what you keep, then click to open it. On a phone, use the state menu. The rest are coming soon."
               action={{ href: "/paycheck-calculator", label: "Or browse as a list" }}
             />
             <UsMapSection />
@@ -196,8 +198,11 @@ export default function HomePage() {
               eyebrow="Calculators"
               id="states-h"
               title="Choose your state"
-              description={`Take-home pay on ${formatWhole(CARD_SALARY * 100)}, single, paid every two weeks. Open a state for the full calculator.`}
-              action={{ href: "/paycheck-calculator", label: "Browse and filter" }}
+              description={`${codes.length > FEATURED_STATES ? "The most searched states. " : ""}Take-home pay on ${formatWhole(CARD_SALARY * 100)}, single, paid every two weeks. Open a state for the full calculator.`}
+              action={{
+                href: "/paycheck-calculator",
+                label: codes.length > FEATURED_STATES ? `All ${codes.length} states` : "Browse and filter",
+              }}
             />
             <div className="card-grid wide">
               {rows.map((r) => (

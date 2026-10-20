@@ -15,7 +15,8 @@
     "check": "npm run typecheck && npm run lint && npm test",
     "signoff": "tsx scripts/signoff.ts",
     "check:rates:prod": "tsx scripts/check-rates.ts --require-signoff",
-    "smoke": "tsx scripts/smoke.mts"
+    "smoke": "tsx scripts/smoke.mts",
+    "gen:rates": "tsx scripts/gen-rates-index.mts"
   },
   "dependencies": {
     "d3-geo": "^3.1.1",
