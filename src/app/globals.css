@@ -3,6 +3,7 @@
 @import "../styles/components.css";
 @import "../styles/site.css";
 @import "../styles/enterprise.css";
+@import "../styles/map.css";
 
 /* Tailwind utilities read the same tokens, so there is one source of truth. */
 @theme inline {

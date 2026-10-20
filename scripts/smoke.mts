@@ -211,7 +211,7 @@ try {
     check("home: comparison chart has one row per state", rowsBefore === 9, String(rowsBefore));
     const firstNet = async () => page.locator(".cmp-row").first().locator(".cmp-values b").innerText();
     const before = await firstNet();
-    await page.getByRole("radio", { name: "$40k" }).click();
+    await page.locator(".cmp").getByRole("radio", { name: "$40k" }).click();
     const after = await firstNet();
     check("home: salary toggle updates the chart", before !== after, `${before} -> ${after}`);
     const nets = await page.locator(".cmp-values b").allInnerTexts();
@@ -277,6 +277,133 @@ try {
     check("footer: trust row present", (await page.locator(".footer-trust li").count()) === 3);
     check("desktop: no console errors across these pages", problems.length === 0, problems.join(" | "));
     await page.close();
+  }
+
+  // Interactive US map.
+  {
+    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    const problems: string[] = [];
+    page.on("pageerror", (e) => problems.push(String(e)));
+    page.on("console", (m) => m.type() === "error" && problems.push(m.text()));
+    await page.goto(`${base}/`, { waitUntil: "networkidle" });
+
+    check("map: one link per published state", (await page.locator("a.map-state").count()) === 9);
+    check(
+      "map: is exposed as a labelled group",
+      (await page.locator('svg.map-svg[role="group"]').getAttribute("aria-label"))!.includes("9 states"),
+    );
+    check(
+      "map: unavailable states are not links",
+      (await page.locator("a.map-state .map-bg").count()) === 0 &&
+        (await page.locator(".map-bg").count()) === 1,
+    );
+    check(
+      "map: every state link has a descriptive label",
+      await page
+        .locator("a.map-state")
+        .evaluateAll((els) =>
+          els.every((e) => /take-home \$[\d,]+ a year/.test(e.getAttribute("aria-label") ?? "")),
+        ),
+    );
+
+    const panelFigure = async () => (await page.locator(".map-panel-figure").innerText()).trim();
+    const panelName = async () => (await page.locator(".map-panel h3").innerText()).trim();
+    check(
+      "map: panel starts on the highest take-home state",
+      (await page.locator(".map-panel .eyebrow").innerText()).toLowerCase().includes("highest"),
+    );
+
+    await page.locator('a.map-state[aria-label^="Ohio"]').hover();
+    check("map: hover previews the state in the panel", (await panelName()) === "Ohio");
+    check(
+      "map: hover shows a tooltip",
+      (await page.locator(".map-tip").isVisible()) &&
+        (await page.locator(".map-tip").innerText()).includes("Ohio"),
+    );
+    await page.mouse.move(5, 5);
+    check("map: tooltip hides when the pointer leaves", (await page.locator(".map-tip").count()) === 0);
+
+    const before = await panelFigure();
+    await page.getByRole("radio", { name: "$40k" }).first().click();
+    check(
+      "map: salary toggle recalculates",
+      before !== (await panelFigure()),
+      `${before} -> ${await panelFigure()}`,
+    );
+    await page.getByRole("radio", { name: "$80k" }).first().click();
+
+    const cls = async (name: string) =>
+      (await page.locator(`a.map-state[aria-label^="${name}"]`).getAttribute("class")) ?? "";
+    check("map: take-home view uses the colour ramp", /is-b\d/.test(await cls("Texas")));
+    await page.getByRole("radio", { name: "How the state taxes pay" }).click();
+    check(
+      "map: tax-type view colours by type",
+      (await cls("Texas")).includes("is-type-none") &&
+        (await cls("Illinois")).includes("is-type-flat") &&
+        (await cls("Ohio")).includes("is-type-graduated"),
+    );
+    check(
+      "map: legend switches to tax types",
+      (await page.locator(".map-types").innerText()).includes("Flat rate"),
+    );
+
+    await page.locator('a.map-state[aria-label^="Texas"]').click();
+    await page.waitForURL("**/paycheck-calculator/texas");
+    check("map: clicking a state opens its calculator", page.url().endsWith("/paycheck-calculator/texas"));
+
+    await page.goto(`${base}/`, { waitUntil: "networkidle" });
+    await page.locator('a.map-state[aria-label^="Georgia"]').focus();
+    check("map: keyboard focus previews the state", (await panelName()) === "Georgia");
+    await page.keyboard.press("Enter");
+    await page.waitForURL("**/paycheck-calculator/georgia");
+    check("map: Enter on a focused state opens it", page.url().endsWith("/georgia"));
+
+    await page.goto(`${base}/paycheck-calculator`, { waitUntil: "networkidle" });
+    check("map: also on the states index", (await page.locator("a.map-state").count()) === 9);
+    for (const path of [
+      "/",
+      "/paycheck-calculator",
+      "/paycheck-calculator/texas",
+      "/overtime-calculator",
+      "/salary/25-an-hour-is-how-much-a-year",
+    ]) {
+      await page.goto(`${base}${path}`, { waitUntil: "networkidle" });
+      const dupes = await page.evaluate(() => {
+        const seen = new Map<string, number>();
+        for (const el of document.querySelectorAll("[id]")) seen.set(el.id, (seen.get(el.id) ?? 0) + 1);
+        return [...seen].filter(([, n]) => n > 1).map(([id]) => id);
+      });
+      check(`${path}: no duplicate element ids`, dupes.length === 0, dupes.join(", "));
+    }
+    check("map: no console errors", problems.length === 0, problems.join(" | "));
+    await page.close();
+
+    // Touch: first tap previews, second tap opens.
+    const ctx = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      isMobile: true,
+      hasTouch: true,
+    });
+    const t = await ctx.newPage();
+    await t.goto(`${base}/`, { waitUntil: "networkidle" });
+    const ohio = t.locator('a.map-state[aria-label^="Ohio"]');
+    await ohio.scrollIntoViewIfNeeded();
+    await ohio.tap();
+    await t.waitForTimeout(400);
+    check("map touch: first tap does not navigate", new URL(t.url()).pathname === "/");
+    check(
+      "map touch: first tap selects and outlines the state",
+      (await t.locator(".map-panel h3").innerText()) === "Ohio" &&
+        (await t.locator(".map-outline").count()) === 1,
+    );
+    check(
+      "map touch: panel offers the calculator link",
+      await t.getByRole("link", { name: /Open the Ohio calculator/ }).isVisible(),
+    );
+    await ohio.tap();
+    await t.waitForURL("**/paycheck-calculator/ohio");
+    check("map touch: second tap opens the calculator", t.url().endsWith("/ohio"));
+    await ctx.close();
   }
 
   // Phone layout: menu, touch targets, overflow at small widths, scroll to result.

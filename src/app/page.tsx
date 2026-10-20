@@ -20,6 +20,7 @@ import { QuickCalculator } from "@/components/QuickCalculator";
 import { SearchButton } from "@/components/SearchButton";
 import { SectionHeader } from "@/components/SectionHeader";
 import { StateCard } from "@/components/StateCard";
+import { UsMapSection } from "@/components/UsMapSection";
 import { StateComparison } from "@/components/StateComparison";
 import { StatCard } from "@/components/StatCard";
 import { convertHourly, formatCents, formatWhole } from "@/engine";
@@ -154,6 +155,22 @@ export default function HomePage() {
           <StatCard Icon={Lock} label="Pay data stored" value="None" hint="calculated in your browser" />
         </div>
       </section>
+
+      {/* Map */}
+      {codes.length > 0 ? (
+        <section className="section" aria-labelledby="map-h">
+          <div className="container">
+            <SectionHeader
+              eyebrow="Explore"
+              id="map-h"
+              title="Pick your state on the map"
+              description="Colored states have a calculator. Hover to preview what you keep, then click to open it. The rest are coming soon."
+              action={{ href: "/paycheck-calculator", label: "Or browse as a list" }}
+            />
+            <UsMapSection />
+          </div>
+        </section>
+      ) : null}
 
       {/* Comparison chart */}
       {codes.length > 1 ? (

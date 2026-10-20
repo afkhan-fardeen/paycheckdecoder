@@ -1,5 +1,6 @@
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { StateExplorer } from "@/components/StateExplorer";
+import { UsMapSection } from "@/components/UsMapSection";
 import { formatWhole } from "@/engine";
 import { compareStates } from "@/lib/compare";
 import { publishableStates } from "@/lib/rates";
@@ -32,6 +33,7 @@ export default function StateIndexPage() {
           and the date its rates were last verified.
         </p>
       </header>
+      {rows.length > 0 ? <UsMapSection /> : null}
       {rows.length > 0 ? (
         <StateExplorer rows={rows} salaryLabel={formatWhole(REFERENCE_SALARY * 100)} />
       ) : (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type KeyboardEvent } from "react";
+import { useId, useRef, type KeyboardEvent } from "react";
 
 interface Props<T extends string> {
   label: string;
@@ -12,7 +12,7 @@ interface Props<T extends string> {
 /** Radio group drawn as buttons. Selected is inverted (ink fill), so selection never relies on color alone. */
 export function Segmented<T extends string>({ label, value, options, onChange }: Props<T>) {
   const group = useRef<HTMLDivElement>(null);
-  const labelId = `seg-${label.replace(/\W+/g, "-").toLowerCase()}`;
+  const labelId = `seg-${useId()}`; // unique per control: two groups may share a label on one page
 
   function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
     const keys = ["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"];
