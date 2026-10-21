@@ -23,8 +23,8 @@
     }
   ],
   "retrievedOn": "2026-10-20",
-  "verifiedBy": null,
-  "verifiedOn": null,
+  "verifiedBy": "Fardeen",
+  "verifiedOn": "2026-10-20",
   "notes": [
     "Read from the official 2026 publication listed in sources on 2026-10-20. Not yet signed off.",
     "Formula: T1 = wages - deduction; T2 = T1 x 3.80%; T3 = T2 - allowance / pay periods. Deduction by pay period (annual: $13,000 other, $19,500 head of household, $26,000 married filing jointly with a non-earning spouse).",
